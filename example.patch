@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<link>
+	<channel>#nerglewhap</channel>
+
+	<server>irc.efnet.org:6667</server>
+	<server>localhost:6667</server>
+
+	<password>changeme</password>
+
+	<!-- Set motd to a filename to load
+	text from that file -->
+	<motd>Welcome to %CHANNEL%!</motd>
+</link>
+
+

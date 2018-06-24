@@ -1,4 +1,4 @@
-# ircpatch
+# ircpatch 0.1442
 
 A bot that "patches" two (or more) IRC channels together.  Features include private messaging between IRC servers, XML support for patch files, user and channel management, and much more.  All chat on each channel, including CTCP "action" messages, will be passed on to all the other channels in the patch.  Basically, you can have the bot connect channels on any server to any other server, and all the chat messages will be passed on.
 

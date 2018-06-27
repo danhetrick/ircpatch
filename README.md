@@ -7,3 +7,7 @@ A bot that "patches" two (or more) IRC channels together.  Features include priv
 Warning:  if you use this bot a lot on servers, the admins will notice.
 
 Requires:  Perl, POE, and POE::Compenent::IRC.
+
+# Note:  this version is for archival purposes only.
+
+The latest version (0.15.**) will eventually take over, and can be viewed on this repository in the "unstable" branch.  The current latest version is 0.15.20, and features a slew of bugfixes, and much easier to read code, with lots and lots of comments.

@@ -9,21 +9,21 @@ Setting for the relay are handled by XML files called *patchfiles*; they contain
 [example.patch](https://github.com/danhetrick/ircpatch/blob/unstable/example.patch "example.patch") is an example of a patchfile:  every "server" element causes the bot to connect to a server, and every "channel" element causes the bot to join a channel.  Eached patched channel will only be able to "talk" to their identically named counterparts (so, "#mychannel" on EFnet and "#mychannel" on Undernet, if patched, will only have messages relayed to each other;  if "#otherchannel" is patched on both networks by the same bot, it will only be able to "talk" to "#otherchannel", and "#mychannel" will only be able to "talk" to "#mychannel").  Patchfiles are XML based, and feature a number of elements, some required, and some not:
 
 * _Required patchfile elements_:
-  * **channel** - Sets the channel to relay.  At least one channel element is required.
-  * **server** - Sets an IRC server to connect to (in *server:port* format).  At least one server element is required.
-  * **password** - Sets the password for administrative functions.
-  * **nick** - Sets the relay's IRC nickname.
-  * **alternate** - Sets the relay's alternate IRC nick if the first is already taken.
+  * `channel` - Sets the channel to relay.  At least one channel element is required.
+  * `server` - Sets an IRC server to connect to (in *server:port* format).  At least one server element is required.
+  * `password` - Sets the password for administrative functions.
+  * `nick` - Sets the relay's IRC nickname.
+  * `alternate` - Sets the relay's alternate IRC nick if the first is already taken.
   
 * _Optional patchfile elements_:
-  * **verbose** - Turns verbose mode on and off.  Default: **on**.
-  * **log** - Turns logging on and off.  Default: **off**.
-  * **bot_chat** - Sets a symbol to be prepended to all relay chat.  Default: "*** ".
-  * **ircname** - Sets the relay's username.  Default:  "irc-patch 0.15.25 IRC bot".
-  * **motd** - Sets the relay's message of the day.  Default: "Welcome to %CHANNEL%, %NICK%!"
-  * **private_messaging** - Turns private messaging on and off.  Default: **on**.
-  * **timestamp** - Turns timestamping on and off.  Default: **on**.
-  * **information** - Turns informational commands on and off.  Default: **on**.
+  * `verbose` - Turns verbose mode on and off.  Default: **on**.
+  * `log` - Turns logging on and off.  Default: **off**.
+  * `bot_chat` - Sets a symbol to be prepended to all relay chat.  Default: "*** ".
+  * `ircname` - Sets the relay's username.  Default:  "irc-patch 0.15.25 IRC bot".
+  * `motd` - Sets the relay's message of the day.  Default: "Welcome to %CHANNEL%, %NICK%!"
+  * `private_messaging` - Turns private messaging on and off.  Default: **on**.
+  * `timestamp` - Turns timestamping on and off.  Default: **on**.
+  * `information` - Turns informational commands on and off.  Default: **on**.
 
 *example.patch* is heavily commented, if there are further questions.
 

@@ -4,7 +4,7 @@
 
 ## Requirements
 
-__*Perl, POE, and POE::Component::IRC.*__
+__*Perl*__, __*POE*__, and __*POE::Component::IRC.*__
 
 ## Patchfiles
 

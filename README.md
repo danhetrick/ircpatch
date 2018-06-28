@@ -42,6 +42,20 @@ Once *irc-patch* is up and running, send `.help` as a private message to the bot
 
 To send a private message to someone in any of the connected channels, send a private message to the bot with `.private <nick> <message>`, or `.p <nick> <message>`;  the message will be relayed by the bot to the appropriate user.  If more than one person is using the same nick, the bot will request that you specify what server the desired nick is using, with `.private <nick> <server> <message>`, or `.p <nick> <server> <message>`.
 
+*Commands available in public chat:*
+ * *.help* - Displays help text.
+ * *.version* - Displays the bot's version.
+ * *.who* - Displays a list of all remote users in the channel.
+ * *.links* - Displays the servers the bot is connected to.
+ * *.refresh* - Refreshed the remote user list.  Available only to logged in administrators.
+ * *.mute* - Mutes the channel (no public chat is relayed to the network).  Issue again to unmute.  Available only to logged in administrators.
+
+*Commands availiable via private message:*
+ * *.help* - Displays help text.
+ * *.version* - Displays the bot's version.
+ * *.who* - Displays a list of all remote users in the channel.
+ * *.links* - Displays the servers the bot is connected to.
+
 Any questions not answered here can be answered by taking a look at the source code of *irc-patch.pl*.  It is heavily commented, and I tried to explain everything the bot does, and, more importantly, *why*.  If the source code doesn't answer your questions, feel free to drop me an email at [dhetrick@gmail.com](mailto:dhetrick@gmail.com).
 
 *irc-patch* is free software; you can redistribute it and/or modify it under the same terms as Perl itself.

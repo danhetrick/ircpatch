@@ -2,6 +2,12 @@
 
 **irc-patch** is an IRC bot that "patches" two (or more) IRC channels together.  Features include cross-server private messaging, multiple server and channel support, logging, XML support for patchfiles, user and channel management, and much more.  All chat on each channel, including CTCP "action" messages, will be passed on to all the other servers in the patch.  Basically, you can have the bot connect channels on any server to any other server, and all the chat messages will be passed on.
 
+## Requirements
+
+__*Perl, POE, and POE::Component::IRC.*__
+
+Also includes XML::TreePP by Yusuke Kawasaki, built into the script.
+
 ## Patchfiles
 
 Setting for the relay are handled by XML files called *patchfiles*; they contain all the information needed for *irc-patch.pl* to connect any number of servers and channels together into a single network.  The root element for a patchfile is **patch**, and all other elements are children of the root.
@@ -75,6 +81,6 @@ If a user tries to log into the bot, and provides the wrong password, they'll be
 
 Any questions not answered here can be answered by taking a look at the source code of *irc-patch.pl*.  It is heavily commented, and I tried to explain everything the bot does, and, more importantly, *why*.  If the source code doesn't answer your questions, feel free to drop me an email at [dhetrick@gmail.com](mailto:dhetrick@gmail.com).
 
-*irc-patch* is free software; you can redistribute it and/or modify it under the same terms as Perl itself.
+## License
 
-__*Requires:  Perl, POE, and POE::Component::IRC.  Also includes XML::TreePP by Yusuke Kawasaki.*__
+*irc-patch* is free software; you can redistribute it and/or modify it under the same terms as Perl itself.

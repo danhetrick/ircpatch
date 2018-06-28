@@ -8,7 +8,7 @@ __*Perl*__, __*POE*__, and __*POE::Component::IRC.*__
 
 ## Patchfiles
 
-Setting for the relay are handled by XML files called *patchfiles*; they contain all the information needed for *irc-patch.pl* to connect any number of servers and channels together into a single network.  The root element for a patchfile is **patch**, and all other elements are children of the root.
+Setting for *irc-patch.pl* are handled by XML files called *patchfiles*; they contain all the information needed for bot to connect any number of servers and channels together into a single network.  The root element for a patchfile is **patch**, and all other elements are children of the root.
 
 [irc-patch.pl](https://github.com/danhetrick/ircpatch/blob/unstable/irc-patch.pl "irc-patch.pl") is the main program, a Perl script.  To use, either create a patchfile named *default.patch* in the same directory as the script, and run it, or create a patchfile with a different name and run *irc-patch.pl* with the patchfile's filename as the first (and only) argument.
 
@@ -43,6 +43,15 @@ Setting for the relay are handled by XML files called *patchfiles*; they contain
         <nick>irc-patch</nick>
         <alternate>irc-patch01525</alternate>
     </patch>
+
+## MOTD
+
+The message of the day features several symbols that be used to customize the greeting.  The symbols are interpolated right before they are sent, so you can customize your MOTD for every user!  The MOTD is sent to every user who joins a channel the bot is in.  There are four symbols available for use:
+
+* *%CHANNEL%* - Replaced with the name of the channel the MOTD recipient has joined.
+* *%NICK%* - Replaced with the joining user's nick.
+* *%HOSTMASK* - Replaced with the joining user's hostmask.
+* *%SERVER%* - Replaced with the server the joining user's on.
 
 ## Administration
 

@@ -1020,7 +1020,7 @@ sub load_patchfile {
 			$motd = join('',<FILE>);
 			close FILE;
 		} else {
-			# MOTD is in the tag's text
+			# MOTD is in the element's text
 			$motd = $tree->{patch}->{motd};
 		}
 	}

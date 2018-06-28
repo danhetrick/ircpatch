@@ -94,4 +94,4 @@ Any questions not answered here can be answered by taking a look at the source c
 
 *irc-patch* is free software; you can redistribute it and/or modify it under the same terms as Perl itself.
 
-Also includes XML::TreePP by Yusuke Kawasaki, built into the program rather than as a separate library.  It's licensed via the same license this program uses.
+Also includes XML::TreePP by Yusuke Kawasaki, built into the program rather than as a separate library.  It's licensed via the same license this program, and Perl, uses.

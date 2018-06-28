@@ -47,15 +47,19 @@ To send a private message to someone in any of the connected channels, send a pr
  * *.version* - Displays the bot's version.
  * *.who* - Displays a list of all remote users in the channel.
  * *.links* - Displays the servers the bot is connected to.
- * *.refresh* - Refreshed the remote user list.  Available only to logged in administrators.
+ * *.refresh* - Refreshes the remote user list.  Available only to logged in administrators.
  * *.mute* - Mutes the channel (no public chat is relayed to the network).  Issue again to unmute.  Available only to logged in administrators.
 
 *Commands availiable via private message:*
  * *.help* - Displays help text.
  * *.version* - Displays the bot's version.
- * *.who* - Displays a list of all remote users in the channel.
+ * *.who CHANNEL* - Displays a list of all remote users in a given channel.
  * *.links* - Displays the servers the bot is connected to.
- * *.admin <password>*
+ * *.admin PASSWORD* - Logs in to the bot for administration.
+ * *.logout* - Logs out of the bot.
+ * *.refresh* - Refreshes the remote user list.  Available only to logged in administrators.
+ * *.private NICK MESSAGE* or *.private NICK SERVER MESSAGE* - Sends a private message to a user via the bot.  If more than one user shares the same nick, the bot will prompt the sender for the target's server.
+ * *.p NICK MESSAGE* - The same as the *.private* command.
 
 Any questions not answered here can be answered by taking a look at the source code of *irc-patch.pl*.  It is heavily commented, and I tried to explain everything the bot does, and, more importantly, *why*.  If the source code doesn't answer your questions, feel free to drop me an email at [dhetrick@gmail.com](mailto:dhetrick@gmail.com).
 

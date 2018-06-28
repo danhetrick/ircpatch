@@ -46,12 +46,14 @@ Setting for *irc-patch.pl* are handled by XML files called *patchfiles*; they co
 
 ## MOTD
 
-The message of the day features several symbols that be used to customize the greeting.  The symbols are interpolated right before they are sent, so you can customize your MOTD for every user!  The MOTD is sent to every user who joins a channel the bot is in.  There are four symbols available for use:
+The message of the day features several symbols that be used to customize the greeting.  The symbols are interpolated right before they are sent, so you can customize your MOTD for every user!  The MOTD is sent to every user who joins a channel the bot is in.  There are six symbols available for use:
 
 * `%CHANNEL%` - Replaced with the name of the channel the MOTD recipient has joined.
 * `%NICK%` - Replaced with the joining user's nick.
 * `%HOSTMASK` - Replaced with the joining user's hostmask.
 * `%SERVER%` - Replaced with the server the joining user's on.
+* `%NETWORK%` - Replaced with a list of servers the bot's connected to.
+* `%USERS%` - Replaced with a list of all remote users in the channel being joined.
 
 ## Administration
 

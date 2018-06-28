@@ -318,16 +318,20 @@ sub irc_join {
 		$mg=~s/\%NICK\%/$nick/g;
 		$mg=~s/\%HOSTMASK\%/$hostmask/g;
 
+		my @s = get_server_list();  my $servers = join(', ',@s);
+		$mg=~s/\%NETWORK\%/$servers/g;
+
+		# Generate the channel remote user list
+		my @ulist = get_channel_user_list($where);
+		if($#ulist>=0){
+			my $u = join(', ',@ulist);
+			$mg=~s/\%USERS\%/$u/g;
+		} else {
+			$mg=~s/\%USERS\%/No users found/g;
+		}
+
 		# Send the MOTD to the joining client as a notice
 		$kernel->post( $sender => notice => $nick => $mg );	
-	}
-
-	# Generate the channel remote user list
-	my @ulist = get_channel_user_list($where);
-
-	# Send the channel remote user list to the client as a notice
-	if($#ulist>=0){
-		$kernel->post( $sender => notice => $nick => $BOT_OUTPUT_SYMBOL."Remote users in $where: ".join(" ",@ulist) );
 	}
 
 	undef;

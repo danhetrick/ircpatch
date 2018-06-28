@@ -6,8 +6,6 @@
 
 __*Perl, POE, and POE::Component::IRC.*__
 
-Also includes XML::TreePP by Yusuke Kawasaki, built into the script.
-
 ## Patchfiles
 
 Setting for the relay are handled by XML files called *patchfiles*; they contain all the information needed for *irc-patch.pl* to connect any number of servers and channels together into a single network.  The root element for a patchfile is **patch**, and all other elements are children of the root.
@@ -84,3 +82,5 @@ Any questions not answered here can be answered by taking a look at the source c
 ## License
 
 *irc-patch* is free software; you can redistribute it and/or modify it under the same terms as Perl itself.
+
+Also includes XML::TreePP by Yusuke Kawasaki, built into the program rather than as a separate library.  It's licensed via the same license this program uses.

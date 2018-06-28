@@ -51,7 +51,7 @@ To send a private message to someone in any of the connected channels, send a pr
  * *.mute* - Mutes the channel (no public chat is relayed to the network).  Issue again to unmute.  Available only to logged in administrators.
 
 *Commands availiable via private message:*
- * *.help* - Displays help text.
+ * _*.help*_ - Displays help text.
  * *.version* - Displays the bot's version.
  * *.who CHANNEL* - Displays a list of all remote users in a given channel.
  * *.links* - Displays the servers the bot is connected to.

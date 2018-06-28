@@ -61,7 +61,7 @@ There are six (6) commands available via public message, and eight (8) commands 
  * `.version` - Displays the bot's version.  Can be disabled via patchfile.
  * `.who CHANNEL` - Displays a list of all remote users in a given channel.  Can be disabled via patchfile.
  * `.links` - Displays the servers the bot is connected to.  Can be disabled via patchfile.
- * `.login PASSWORD` - Logs in to the bot for administration.
+ * `.login PASSWORD` - Logs in to the bot for administration.  Only one user can be logged into the bot at a time.
  * `.logout` - Logs out of the bot.  Restricted to administrators.
  * `.refresh` - Refreshes the remote user list.  Restricted to administrators.
  * `.private NICK MESSAGE` or `.private NICK SERVER MESSAGE` - Sends a private message to a user via the bot.  If more than one user shares the same nick, the bot will prompt the sender for the target's server.  Can be disabled via patchfile.
@@ -69,7 +69,7 @@ There are six (6) commands available via public message, and eight (8) commands 
 
 ## Blacklist
 
-If a user tries to log into the bot, and provides the wrong password, they'll be put on the *blacklist*.  Blacklisted users can't try to log in for a short time period, selected at random from between 60-120 seconds.  Once the user's "timeout" expires, they can log in like normal.  The blacklist *only* effects users that have provided a wrong password; other users can log in like normal.
+If a user tries to log into the bot, and provides the wrong password, they'll be put on the *blacklist*.  Blacklisted users can't try to log in for a short time period, selected at random from between 60-120 seconds.  Once the user's "timeout" expires, they can log in like normal.  The blacklist *only* effects users that have provided a wrong password; other users can log in like normal.  Users on the blacklist can also issue other commands, they just can't log in.
 
 Any questions not answered here can be answered by taking a look at the source code of *irc-patch.pl*.  It is heavily commented, and I tried to explain everything the bot does, and, more importantly, *why*.  If the source code doesn't answer your questions, feel free to drop me an email at [dhetrick@gmail.com](mailto:dhetrick@gmail.com).
 

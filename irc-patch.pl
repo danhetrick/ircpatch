@@ -369,10 +369,10 @@ sub irc_msg {
 	my $channel = $where->[0];
 	my $server_name = $poco->server_name();
 
-	# .admin PASSWORD
+	# .login PASSWORD
 	# Logs in as the administrator.  If the user enters the wrong password, they
 	# have to wait 60 seconds before they can try again.
-	if ( my ($admin) = $what =~ /^\.admin (.+)/ ) {
+	if ( my ($admin) = $what =~ /^\.login (.+)/ ) {
 
 		# Is the user blacklisted?
 		if(is_user_blacklisted($hostmask)==1){

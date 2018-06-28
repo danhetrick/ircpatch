@@ -1,15 +1,143 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<link>
-	<channel>#nerglewhap</channel>
+<!--
+	     _                             __       __  
+	    (_)_________      ____  ____ _/ /______/ /_ 
+	   / / ___/ ___/_____/ __ \/ __ `/ __/ ___/ __ \
+	  / / /  / /__/_____/ /_/ / /_/ / /_/ /__/ / / /
+	 /_/_/   \___/     / .___/\__,_/\__/\___/_/ /_/ 
+	                  /_/        v0.15.25 - "bamboo"
 
-	<server>irc.efnet.org:6667</server>
+	=================
+	| example.patch |
+	=================
+
+	This is an example patchfile for use with irc-patch.pl.  It will
+	connect the channel "#ircpatch" an IRC server to running on localhost.
+	IRC server on localhost, set the administration password to
+	"changeme", set the MOTD to welcome incoming users, and turn
+	verbose mode on.
+
+	Multiple channels can be patched together (and the chat traffic
+	from one won't be sent to any differently named channel).
+	Multiple servers can also be patched together;  and channels
+	patched on one network will automatically be patched to the 
+	according channel on any named network.
+
+	These elements are required for a valid patchfile:  channel, server,
+	password, nick, alternate
+
+	Optional elements and their default values: verbose (0), log (""), bot_chat ("*** "),
+	ircname ("irc-patch bamboo-0.15.25 (IRC network-channel relay bot)"),
+	motd (""), private_messaging (1), timestamp (1), information (1)
+
+-->
+
+<patch>
+
+	<!--
+		======================
+		| IRC-PATCH SETTINGS |
+		======================
+	-->
+
+	<!--
+		Set "verbose" to "1", "yes", or "on" to turn on verbose mode.
+		Not required.
+	-->
+	<verbose>on</verbose>
+
+	<!--
+		Set "log" to a valid filename to turn on logging.
+		Not required.
+	-->
+	<log></log>
+
+	<!-- 
+		Set "private_messaging" to "1", "yes", or "on" to turn on private messaging.
+		Set "private_messaging" to "0", "no", or "off" to turn off private messaging.
+		Not required.  Default value is 1.
+	-->
+	<private_messaging>on</private_messaging>
+
+	<!-- 
+		Set "information" to "1", "yes", or "on" to turn on information commands (.who, .list, .version).
+		Set "information" to "0", "no", or "off" to turn off information commands.
+		Not required.  Default value is 1.
+	-->
+	<information>on</information>
+
+	<!-- 
+		Set "timestamp" to "1", "yes", or "on" to turn on timestamped log and verbose messages.
+		Set "timestamp" to "0", "no", or "off" to turn off timestamped log and verbose messages.
+		Not required.  Default value is 1.
+	-->
+	<timestamp>on</timestamp>
+
+	<!--
+		================
+		| BOT SETTINGS |
+		================
+	-->
+
+	<!-- 
+		Set "bot_chat_id" to preface all bot's chats with a symbol.
+		Not required.  Default value is "*** ".
+	-->
+	<bot_chat_id>*** </bot_chat_id>
+
+	<!-- 
+		Create one "channel" element for each channel that you want to patch.
+		At least one "channel" is required.
+	-->
+	<channel>#ircpatch</channel>
+
+	<!--
+		Create one "server" element for each server/network that you want to patch.
+		Format for each is "server/IP:port".
+		At least one "server" is required.
+	-->
 	<server>localhost:6667</server>
-
+	
+	<!--
+		Sets the password required for administration functions; only one per patchfile.
+		Required for a valid patchfile.
+	-->
 	<password>changeme</password>
 
-	<!-- Set motd to a filename to load
-	text from that file -->
-	<motd>Welcome to %CHANNEL%!</motd>
-</link>
+	<!--
+		Set "nick" to the desired bot's nick;  only one per patchfile.
+		Required for a valid patchfile.
+	-->
+	<nick>irc-patch</nick>
 
+	<!-- 
+	     Set "alternate" to the desired bot's alternate nick;  only one per patchfile.
+         If both the desired nick and alternate are in use, the alternate nick will
+         be used with a random number appended onto the end.
+         Required for a valid patchfile.
+     -->
+	<alternate>irc-patch01525</alternate>
 
+	<!--
+		Set "ircmame" the desired bot's username;  only one per patchfile.
+		Not required;  the default value is "irc-patch bamboo-0.15.25 (IRC network-channel relay bot)".
+	-->
+	<ircname>irc-patch 0.15.25 IRC bot</ircname>
+
+	<!--
+		Set motd to a filename to load text from that file.
+		This message will be sent to the joining user via private notice,
+		along with a list of all remote users.
+		Several symbols in the provided MOTD will be replaced with the
+		appropirate information:
+
+			%CHANNEL%	-> The channel being joined
+			%SERVER%	-> The server the user joined on
+			%NICK%		-> The joining user's nick
+			%HOSTMASK%	-> The joining user's hostmask
+
+		Not required.
+	-->
+	<motd>Welcome to %CHANNEL%, %NICK%!</motd>
+
+</patch>

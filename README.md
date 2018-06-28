@@ -44,4 +44,4 @@ To send a private message to someone in any of the connected channels, send a pr
 
 *irc-patch* is free software; you can redistribute it and/or modify it under the same terms as Perl itself.
 
-__*Requires:  Perl, POE, and POE::Component::IRC.*__
+__*Requires:  Perl, POE, and POE::Component::IRC.  Also includes XML::TreePP by Yusuke Kawasaki.*__

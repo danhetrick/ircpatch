@@ -44,21 +44,21 @@ To send a private message to someone in any of the connected channels, send a pr
 
 *Commands available in public chat:*
  * __*.help*__ - Displays help text.
- * __*.version*__ - Displays the bot's version.
- * __*.who*__ - Displays a list of all remote users in the channel.
- * __*.links*__ - Displays the servers the bot is connected to.
- * __*.refresh*__ - Refreshes the remote user list.  Available only to logged in administrators.
- * __*.mute*__ - Mutes the channel (no public chat is relayed to the network).  Issue again to unmute.  Available only to logged in administrators.
+ * __*.version*__ - Displays the bot's version.  Can be disabled via patchfile.
+ * __*.who*__ - Displays a list of all remote users in the channel.  Can be disabled via patchfile.
+ * __*.links*__ - Displays the servers the bot is connected to.  Can be disabled via patchfile.
+ * __*.refresh*__ - Refreshes the remote user list.  Restricted to administrators.
+ * __*.mute*__ - Mutes the channel (no public chat is relayed to the network).  Issue again to unmute.  Restricted to administrators.
 
 *Commands availiable via private message:*
  * __*.help*__ - Displays help text.
- * __*.version*__ - Displays the bot's version.
- * __*.who CHANNEL*__ - Displays a list of all remote users in a given channel.
- * __*.links*__ - Displays the servers the bot is connected to.
+ * __*.version*__ - Displays the bot's version.  Can be disabled via patchfile.
+ * __*.who CHANNEL*__ - Displays a list of all remote users in a given channel.  Can be disabled via patchfile.
+ * __*.links*__ - Displays the servers the bot is connected to.  Can be disabled via patchfile.
  * __*.admin PASSWORD*__ - Logs in to the bot for administration.
- * __*.logout*__ - Logs out of the bot.
- * __*.refresh*__ - Refreshes the remote user list.  Available only to logged in administrators.
- * __*.private NICK MESSAGE*__ or __*.private NICK SERVER MESSAGE*__ - Sends a private message to a user via the bot.  If more than one user shares the same nick, the bot will prompt the sender for the target's server.
+ * __*.logout*__ - Logs out of the bot.  Restricted to administrators.
+ * __*.refresh*__ - Refreshes the remote user list.  Restricted to administrators.
+ * __*.private NICK MESSAGE*__ or __*.private NICK SERVER MESSAGE*__ - Sends a private message to a user via the bot.  If more than one user shares the same nick, the bot will prompt the sender for the target's server.  Can be disabled via patchfile.
  * __*.p NICK MESSAGE*__ - The same as the __*.private*__ command.
 
 Any questions not answered here can be answered by taking a look at the source code of *irc-patch.pl*.  It is heavily commented, and I tried to explain everything the bot does, and, more importantly, *why*.  If the source code doesn't answer your questions, feel free to drop me an email at [dhetrick@gmail.com](mailto:dhetrick@gmail.com).

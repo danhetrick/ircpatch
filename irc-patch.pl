@@ -1,12 +1,11 @@
 #!/usr/bin/perl
-#
-# ----------------
-# | irc-patch.pl |
-# ----------------
-#
-use strict;
-use POE qw(Component::IRC);
-use FindBin qw($Bin $RealBin);
+#    
+#     _                             __       __  
+#    (_)_________      ____  ____ _/ /______/ /_ 
+#   / / ___/ ___/_____/ __ \/ __ `/ __/ ___/ __ \
+#  / / /  / /__/_____/ /_/ / /_/ / /_/ /__/ / / /
+# /_/_/   \___/     / .___/\__,_/\__/\___/_/ /_/ 
+#                  /_/        v0.15.25 - "bamboo"
 #
 # IRC Network-to-Network Channel Link
 #
@@ -16,13 +15,7 @@ use FindBin qw($Bin $RealBin);
 # other linked channel, allowing users on
 # different networks to chat to each other.
 #
-# Settings are loaded from a configuration file located
-# in the same directory as the script.
-# Alternately, the filename of a configuration file
-# can be passed to the script as the first command-
-# line argument.
-#
-# Copyright 2008 Dan Hetrick
+# Copyright 2018 Dan Hetrick
 #
 # Author:  Dan Hetrick (dhetrick@gmail.com)
 #
@@ -47,16 +40,35 @@ use FindBin qw($Bin $RealBin);
 # | same terms as Perl itself.                          |
 # =======================================================
 
+# =================
+# | MODULES BEGIN |
+# =================
+
+use strict;
+use POE qw(Component::IRC);
+use FindBin qw($Bin $RealBin);
+
+# ===============
+# | MODULES END |
+# ===============
+
 # ===================
 # | CONSTANTS BEGIN |
 # ===================
 
-use constant USER_NICK => 0;
-use constant USER_CHANNEL => 1;
-use constant USER_SERVER => 2;
-use constant USER_IS_AN_OP => 3;
-use constant USER_IS_VOICED => 4;
-use constant USER_LAST_REFRESH => 5;
+# User list
+use constant USER_NICK 			=> 0;
+use constant USER_CHANNEL 		=> 1;
+use constant USER_SERVER 		=> 2;
+use constant USER_IS_AN_OP 		=> 3;
+use constant USER_IS_VOICED 	=> 4;
+use constant USER_LAST_REFRESH 	=> 5;
+
+# Blacklist
+use constant BLACKLIST_HOSTNAME			=> 0;
+use constant BLACKLIST_LOCKOUT			=> 1;
+use constant BLACKLIST_LENGTH_MINIMUM	=> 60;
+use constant BLACKLIST_LENGTH_MAXIMUM	=> 120;
 
 # =================
 # | CONSTANTS END |
@@ -69,81 +81,88 @@ use constant USER_LAST_REFRESH => 5;
 # -------
 # Scalars
 # -------
-my $APPLICATION = "irc-patch";
-my $VERSION = "0.1442";
-my $verbose = 0;
-my $nickname = 'irc-patch' . $$;
-my $alternate_nickname = 'irc-patch'. $$;
-my $current_nick = $nickname;
-my $ircname  = 'irc-patch IRC network-channel relay bot';
-my $admin_password="changeme";
-my $TIME = 0;
+my $APPLICATION 		= "irc-patch.pl";
+my $VERSION 			= "0.15.25";
+my $RELEASE				= "bamboo";
+my $DESCRIPTION			= "IRC network-channel relay bot";
+my $TIME				= 0;
 
 # ------
 # Arrays
 # ------
-my @users = ();
-my @chanlist = ();
-my @network = ();
-my @admin = ( '','' );
-my @mute = ();
+my @USERS		= ();			# User list for all channels/servers
+my @NETWORK 	= ();			# List of POE objects for server/channel connections
+my @ADMIN		= ( '','' );	# User who is logged in as admin
+my @MUTE		= ();			# List of muted channels
+my @BLACKLIST	= ();			# List of blacklisted users
 
 # ------
 # Hashes
 # ------
 my %servers = {};
 
+# ============================
+# | PATCHFILE SETTINGS BEGIN |
+# ============================
+
+# These scalars are set to values from the patchfile
+
+my $VERBOSE 			= 0;
+my $LOG 				= "";
+my $NICKNAME 			= 'irc-patch' . $$;
+my $ALTERNATE_NICK 		= 'irc-patch'. $$;
+my $CURRENT_NICK		= $NICKNAME;
+my $USERNAME  			= "$APPLICATION $RELEASE-$VERSION ($DESCRIPTION)";
+my $ADMIN_PASSWORD 		="changeme";
+my $MOTD				= '';
+my $BOT_OUTPUT_SYMBOL	= '*** ';
+my $PRIVATE_MESSAGE 	= 1;
+my $TIMESTAMP 			= 1;
+my $INFORMATION_CMDS	= 1;
+
+# ==========================
+# | PATCHFILE SETTINGS END |
+# ==========================
+
 # ===============
 # | GLOBALS END |
 # ===============
 
-# ==================
-# | SETTINGS BEGIN |
-# ==================
+# ======================
+# | MAIN PROGRAM BEGIN |
+# ======================
 
-my $config = "$RealBin/irc-patch.conf";
-my $linkfile = '';
+# Default patchfile name
+my $PATCHFILE 			= 'default.patch';
 
-# ================
-# | SETTINGS END |
-# ================
+# If a patchfile file name is passed as the first argument, use it,
+# else use the default, "default.patch"
+if($#ARGV>=0){ $PATCHFILE=$ARGV[0]; }
 
-# =====================
-# | MAIN SCRIPT BEGIN |
-# =====================
-
-# If a config file name is passed as the first
-# argument, use it.
-if($#ARGV>=0){ $linkfile=$ARGV[0]; }
-
-# If the config file exists...
-if((-e $config)&&(-f $config)){
-	# ...load it.
-	config($config);
-# If not...
-} else {
-	print "ERROR:  Configuration file \"$config\" not found.\n";
-	exit 1;
-}
-
-if($linkfile eq ''){
+# If no patchfile is found, display error and exit.
+if((-e $PATCHFILE) && (-f $PATCHFILE)){} else {
+	print "$APPLICATION $RELEASE-$VERSION ($DESCRIPTION)\n";
+	print "Patchfile \"$PATCHFILE\" not found!\n";
 	print "Usage: perl $0 FILENAME\n";
 	exit 1;
 }
 
-my $greeting = '';
-
-load_irc_patch_xml_linkfile($linkfile);
+# Load in the patchfile
+load_patchfile($PATCHFILE);
 
 # Display our banner if verbose is turned on
-display("$APPLICATION $VERSION\n");
+if($VERBOSE==1){
+	my  $banner = banner_ascii_graphic();
+	print $banner."$DESCRIPTION\n$APPLICATION (v$VERSION - \"$RELEASE\")\n";
+	print "(c) Copyright Daniel Hetrick 2018\n\n";
+}
 
 # Create a POE object for each server we're connecting to
 foreach my $server ( keys %servers ) {
 	POE::Component::IRC->spawn(
 		alias   => $server,
-		nick    => $nickname,
-		ircname => $ircname,
+		nick    => $NICKNAME,
+		ircname => $USERNAME,
 	);
 }
 
@@ -158,96 +177,9 @@ POE::Session->create(
 $poe_kernel->run();
 exit 0;
 
-# ===================
-# | MAIN SCRIPT END |
-# ===================
-
-
-sub load_irc_patch_xml_linkfile {
-	my $filename = shift;
-
-	my @xchannels = ();
-	my @xservers = ();
-	my $password = '';
-	my $motd = '';
-	my $xnick = '';
-	my $xinfo = '';
-	my $xanick = '';
-
-	my $tpp = XML::TreePP->new();
-	my $tree = $tpp->parsefile( $filename );
-
-	if($tree->{link}->{channel}){
-		if(ref($tree->{link}->{channel}) eq 'ARRAY'){
-			foreach my $c (@{$tree->{link}->{channel}}) {
-				push(@xchannels,$c);
-			}
-		} else {
-			push(@xchannels,$tree->{link}->{channel});
-		}
-	}
-
-	if($tree->{link}->{server}){
-		if(ref($tree->{link}->{server}) eq 'ARRAY'){
-			foreach my $c (@{$tree->{link}->{server}}) {
-				push(@xservers,$c);
-			}
-		} else {
-			push(@xservers,$tree->{link}->{server});
-		}
-	}
-
-	if($tree->{link}->{password}){
-		$password = $tree->{link}->{password};
-	}
-
-	if($tree->{link}->{motd}){
-		if((-e $tree->{link}->{motd})&&(-f $tree->{link}->{motd})){
-			open(FILE,"<$tree->{link}->{motd}") or return undef;
-			$motd = join('',<FILE>);
-			close FILE;
-		} else {
-			$motd = $tree->{link}->{motd};
-		}
-	}
-
-	if($tree->{link}->{nick}){
-		$xnick = $tree->{link}->{nick};
-	}
-
-	if($tree->{link}->{ircname}){
-		$xinfo = $tree->{link}->{ircname};
-	}
-
-	if($tree->{link}->{alternate}){
-		$xanick = $tree->{link}->{alternate};
-	}
-
-	if($xnick ne ''){ $nickname = $xnick;  $current_nick = $nickname; }
-	if($xinfo ne ''){ $ircname = $xinfo; }
-	if($xanick ne ''){ $alternate_nickname = $xanick; }
-
-	$greeting = $motd;
-
-	$admin_password = $password;
-
-	foreach my $s (@xservers) {
-		my @e = split(':',$s);
-		my $server = '';
-		my $port = 6667;
-		if($#e==1){
-			$server = $e[0];
-			$port = $e[1];
-		} else {
-			$server = $e[0];
-		}
-		my %entry = {};
-		$entry{port} = $port;
-		$entry{channels} = \@xchannels;
-		$servers{$server} = \%entry;
-	}
-
-}
+# ====================
+# | MAIN PROGRAM END |
+# ====================
 
 # ====================
 # | POE EVENTS BEGIN |
@@ -275,7 +207,11 @@ sub _beat {
 	# Increment server time by one
 	$TIME=$TIME+1;
 
+	# Make sure the _beat is executed again, in one second
 	$kernel->delay( _beat => 1 );
+
+	# Remove users from the blacklist that have timed out
+	clean_blacklist();
 
 	undef;
 }
@@ -293,6 +229,9 @@ sub _start {
 	# Start up the heartbeat
 	$kernel->delay( _beat => 1 );
 
+	# Display/log the bot startup
+	display("Starting up IRC bot...\n");
+
 	undef;
 }
 
@@ -303,7 +242,6 @@ sub _start {
 sub irc_registered {
 	my ( $kernel, $heap, $sender, $irc_object ) =
 		@_[ KERNEL, HEAP, SENDER, ARG0 ];
-
 	my $alias = $irc_object->session_alias();
 
 	my %conn_hash = (
@@ -323,22 +261,27 @@ sub irc_registered {
 # Triggered every time the bot connects to an IRC server.
 sub irc_001 {
 	my ( $kernel, $heap, $sender ) = @_[ KERNEL, HEAP, SENDER ];
-
 	my $poco_object = $sender->get_heap();
-	display("Connected to ".$poco_object->server_name()."!\n");
+
+	# Display/log the successful connection
+	display("Connected to ".$poco_object->server_name()."\n");
 
 	# Add the POE object to the "network"
 	my @entry = ($kernel,$sender);
-	push(@network,\@entry);
+	push(@NETWORK,\@entry);
 
+	# Join channels named in the patchfile
 	my $alias    = $poco_object->session_alias();
 	my @channels = @{ $heap->{config}->{$alias}->{channels} };
-
-	$kernel->post( $sender => join => $_ ) for @channels;
-
 	foreach my $c (@channels) {
-		display("Joining channel \"$c\"\n");
-		refresh_channel_user_list($poco_object->server_name(),$c,$kernel,$sender);
+		# Join the channel
+		$kernel->post( $sender => join => $c);
+
+		# Display/log the channel joined
+		display("Joining channel \"$c\" on \"".$poco_object->server_name()."\"\n");
+
+		# Update the internal user list
+		update_user_list($poco_object->server_name(),$c,$kernel,$sender);
 	}
 
 	undef;
@@ -356,42 +299,35 @@ sub irc_join {
 	my $poco = $sender->get_heap();
 	my $server_name = $poco->server_name();
 
-	if($nick eq $current_nick){ return undef; }
+	# Don't do anything if the joining client is the bot
+	if($nick eq $CURRENT_NICK){ return undef; }
 
-	display("$nick joined channel $where\n");
+	# Display/log and broadcast join information
+	display("$nick joined channel $where ($server_name)\n");
+	broadcast("$nick has joined the channel ($server_name)",$where,$server_name);
 
-	refresh_channel_user_list($server_name,$where,$kernel,$sender);
+	# Update the internal user list
+	update_user_list($server_name,$where,$kernel,$sender);
 
-	broadcast_to_link("*** $nick has joined the channel ($server_name)",$where,$server_name);
-
-	if($greeting ne ''){
-
-		my $mg = $greeting;
+	# If there's an MOTD, prepare and send to the joining client as a notice
+	if($MOTD ne ''){
+		# Interpolate the MOTD from patchfile
+		my $mg = $MOTD;
 		$mg=~s/\%CHANNEL\%/$where/g;
 		$mg=~s/\%SERVER\%/$server_name/g;
 		$mg=~s/\%NICK\%/$nick/g;
 		$mg=~s/\%HOSTMASK\%/$hostmask/g;
 
-		#$kernel->post( $sender => notice => $nick => "Welcome to $where!" );
-		#$kernel->post( $sender => notice => $nick => "Type \".help\" (without the quotes) to see a list of commands." );
-		$kernel->post( $sender => notice => $nick => $mg );
-		# Display the user list
-		my @ulist = ();
-		foreach my $u (@users) {
-			my @ua = @{$u};
-			if($ua[USER_CHANNEL] eq $where) {
-				my $n = $ua[USER_NICK];
-				my $s = $ua[USER_SERVER];
-				if($s eq $server_name){ next; }
-				if(($ua[USER_IS_VOICED]==1)&&($ua[USER_IS_AN_OP]==0)){ $n='+'.$n; }
-				if($ua[USER_IS_AN_OP]==1){ $n='@'.$n; }
-				push(@ulist,"$n" );
-			}
-			
-		}
-		if($#ulist>=0){
-			$kernel->post( $sender => notice => $nick => "*** Remote users in $where: ".join(" ",@ulist) );
-		}	
+		# Send the MOTD to the joining client as a notice
+		$kernel->post( $sender => notice => $nick => $mg );	
+	}
+
+	# Generate the channel remote user list
+	my @ulist = get_channel_user_list($where);
+
+	# Send the channel remote user list to the client as a notice
+	if($#ulist>=0){
+		$kernel->post( $sender => notice => $nick => $BOT_OUTPUT_SYMBOL."Remote users in $where: ".join(" ",@ulist) );
 	}
 
 	undef;
@@ -409,11 +345,12 @@ sub irc_part {
 	my $poco = $sender->get_heap();
 	my $server_name = $poco->server_name();
 
-	display("$nick left channel $where\n");
+	# Display/log and broadcast part information
+	display("$nick left channel $where ($server_name)\n");
+	broadcast($BOT_OUTPUT_SYMBOL."$nick has left the channel ($server_name)",$where,$server_name);
 
-	refresh_channel_user_list($server_name,$where,$kernel,$sender);
-
-	broadcast_to_link("*** $nick has left the channel ($server_name)",$where,$server_name);
+	# Update the internal user list
+	update_user_list($server_name,$where,$kernel,$sender);
 
 	undef;
 }
@@ -422,27 +359,55 @@ sub irc_part {
 # irc_msg
 # =======
 # Triggered every time the bot receives a private message.
+# Here's where bot commands are handled.
 sub irc_msg {
 	my ( $kernel, $sender, $who, $where, $what ) =
 		@_[ KERNEL, SENDER, ARG0, ARG1, ARG2 ];
 	my $nick    = ( split /!/, $who )[0];
 	my $hostmask    = ( split /!/, $who )[1];
 	my $poco = $sender->get_heap();
+	my $channel = $where->[0];
+	my $server_name = $poco->server_name();
 
 	# .admin PASSWORD
-	# Logs in as the administrator
+	# Logs in as the administrator.  If the user enters the wrong password, they
+	# have to wait 60 seconds before they can try again.
 	if ( my ($admin) = $what =~ /^\.admin (.+)/ ) {
-		if($admin eq $admin_password){
-			if(($admin[0] eq '')&&($admin[1] eq '')) {
-				$admin[0] = $nick;
-				$admin[1] = $hostmask;
-				$kernel->post( $sender => privmsg => $nick => "Logged in!" );
+
+		# Is the user blacklisted?
+		if(is_user_blacklisted($hostmask)==1){
+
+			# Display/log/notify that the user is blacklisted, and tried to login.
+			$kernel->post( $sender => privmsg => $nick => $BOT_OUTPUT_SYMBOL."Incorrect password entered.  Try again later." );
+			display("$nick ($hostmask) tried to log into bot while blacklisted\n");
+
+			return undef;
+		}
+
+		# Check to see if the entered password is correct, and if so, log the user in.
+		if($admin eq $ADMIN_PASSWORD){
+			if(($ADMIN[0] eq '')&&($ADMIN[1] eq '')) {
+				$ADMIN[0] = $nick;
+				$ADMIN[1] = $hostmask;
+
+				# Display/log/notify the user that they've logged in successfully.
+				$kernel->post( $sender => privmsg => $nick => $BOT_OUTPUT_SYMBOL."Logged in!" );
+				display("$nick ($hostmask) logged into the bot\n");
 			} else {
-				$kernel->post( $sender => privmsg => $nick => "Someone is already logged in as admin." );
+
+				# Display/log/notify the user that someone is already logged in.
+				$kernel->post( $sender => privmsg => $nick => $BOT_OUTPUT_SYMBOL."Someone is already logged in as admin." );
+				display("$nick ($hostmask) tried to log into bot but $ADMIN[0] ($ADMIN[1]) is already logged in\n");
 			}
 			return undef;
 		} else {
-			$kernel->post( $sender => privmsg => $nick => "Login incorrect." );
+
+			# Add user to blacklist;  users can only try one incorrect password a minute.
+			my $timeout = add_user_to_blacklist($hostmask);
+
+			# Display/log/notify the user that they entered the wrong password.
+			$kernel->post( $sender => privmsg => $nick => $BOT_OUTPUT_SYMBOL."Login incorrect. Try again in $timeout seconds." );
+			display("$nick ($hostmask) tried to log into bot with wrong password;  blacklisted for $timeout seconds\n");
 			return undef;
 		}
 	}
@@ -450,16 +415,44 @@ sub irc_msg {
 	# .logout
 	# If you're the admin, it logs you out.
 	if( $what =~ /^\.logout$/ ) {
-		if(($admin[0] eq $nick)&&($admin[1] eq $hostmask)){
-			@admin = ( '','' );
-			$kernel->post( $sender => privmsg => $nick => "Logged out." );
+		if(($ADMIN[0] eq $nick)&&($ADMIN[1] eq $hostmask)){
+
+			# Logout the user
+			@ADMIN = ( '','' );
+
+			# Display/log/notify the user that they logged out.
+			$kernel->post( $sender => privmsg => $nick => $BOT_OUTPUT_SYMBOL."Logged out." );
+			display("$nick ($hostmask) logged out of the bot\n");
 			return undef;
 		}
 	}
 
-	# .private USERNAME MESSAGE
-	# Sends a private message via the link
+	# .refresh
+	# Refreshes the bot's internal user list manually.
+	# Only available to admins.
+	if( $what =~ /^\.refresh$/ ) {
+		if(($ADMIN[0] eq $nick)&&($ADMIN[1] eq $hostmask)){
+			update_user_list($server_name,$channel,$kernel,$sender);
+			$kernel->post( $sender => notice => $nick => $BOT_OUTPUT_SYMBOL."User list refreshed." );
+		}
+		return undef;
+	}
+
+	# .private USERNAME MESSAGE -or- .private USERNAME SERVER MESSAGE
+	# Sends a private message via the patch network.  This command can
+	# also take three arguments;  if there's more than one client with
+	# the same nick, the client will be asked to provide the server
+	# that the desired target is one.  That variation of .private is
+	# not handled here;  it's handled in private_message().
 	if ( my ($private) = $what =~ /^\.private (.+)/ ) {
+
+		if($PRIVATE_MESSAGE != 1){
+			# Private messaging is turned off.
+			$kernel->post( $sender => notice => $nick => $BOT_OUTPUT_SYMBOL."Private messaging has been turned off" );
+			return undef;
+		}
+
+		# Parse out the command input.
 		my @p = split(' ',$private);
 		my $target = '';
 		my $message = '';
@@ -467,18 +460,29 @@ sub irc_msg {
 			$target = shift @p;
 			$message = join(' ',@p);
 		} else {
-			$kernel->post( $sender => notice => $nick => "USAGE: .private USERNAME MESSAGE" );
+			# No arguments passed to the .private command
+			# Notify the client with command usage information.
+			$kernel->post( $sender => notice => $nick => $BOT_OUTPUT_SYMBOL."USAGE: .private USERNAME MESSAGE" );
 			return undef;
 		}
-		# Now we've got a private message to send
-		send_private_message($target,$message,$nick,$kernel,$sender);
+
+		# Now we've got a private message to send, so send it.
+		private_message($target,$message,$nick,$kernel,$sender);
 
 		return undef;
 	}
 
 	# .p USERNAME MESSAGE
-	# Sends a private message via the link
+	# Sends a private message via the patch network.
 	if ( my ($private) = $what =~ /^\.p (.+)/ ) {
+
+		if($PRIVATE_MESSAGE != 1){
+			# Private messaging is turned off.
+			$kernel->post( $sender => notice => $nick => $BOT_OUTPUT_SYMBOL."Private messaging has been turned off" );
+			return undef;
+		}
+
+		# Parse out the command input.
 		my @p = split(' ',$private);
 		my $target = '';
 		my $message = '';
@@ -486,72 +490,94 @@ sub irc_msg {
 			$target = shift @p;
 			$message = join(' ',@p);
 		} else {
-			$kernel->post( $sender => notice => $nick => "USAGE: .p USERNAME MESSAGE" );
+			# No arguments passed to the .p command
+			# Notify the client with command usage information.
+			$kernel->post( $sender => notice => $nick => $BOT_OUTPUT_SYMBOL."USAGE: .p USERNAME MESSAGE" );
 			return undef;
 		}
+
 		# Now we've got a private message to send
-		send_private_message($target,$message,$nick,$kernel,$sender);
+		private_message($target,$message,$nick,$kernel,$sender);
 
 		return undef;
 	}
-
 
 	# .help
 	# Displays help text.
 	if( $what =~ /^\.help$/ ) {
-		$kernel->post( $sender => privmsg => $nick => "$APPLICATION IRC Bot" );
-		$kernel->post( $sender => privmsg => $nick => ".help			Display this text" );
-		$kernel->post( $sender => privmsg => $nick => ".version			Display software version" );
-		$kernel->post( $sender => privmsg => $nick => ".who CHANNEL			Display a list of users in CHANNEL" );
-		$kernel->post( $sender => privmsg => $nick => ".links			List the servers currently linked" );
-		$kernel->post( $sender => privmsg => $nick => ".private USER MSG		Sends a private message via the link" );
-		$kernel->post( $sender => privmsg => $nick => ".p USER MSG			Sends a private message via the link" );
-		$kernel->post( $sender => privmsg => $nick => ".admin PASSWORD			Logs you in as a bot admin" );
-		$kernel->post( $sender => privmsg => $nick => ".logout			If you're the admin, it logs you out of the bot" );
-		return undef;
-	}
 
-	# .version
-	# Displays bot version
-	if( $what =~ /^\.version$/ ) {
-		$kernel->post( $sender => privmsg => $nick => "$APPLICATION $VERSION" );
-		return undef;
-	}
+		# Non-admin commands.
+		$kernel->post( $sender => privmsg => $nick => $BOT_OUTPUT_SYMBOL."$APPLICATION IRC Bot" );
+		$kernel->post( $sender => privmsg => $nick => $BOT_OUTPUT_SYMBOL.".help			Display this text" );
+		$kernel->post( $sender => privmsg => $nick => $BOT_OUTPUT_SYMBOL.".admin PASSWORD			Logs you in as a bot admin" );
 
-	# .links
-	# Display what servers the bot is connected to
-	if( $what =~ /^\.links$/ ) {
-		my @s = get_server_list();
-		$kernel->post( $sender => privmsg => $nick => "This channel is linked to ".join(", ",@s) );
-		return undef;
-	}
-
-	# .who CHANNEL
-	# Causes the bot to send a list of all users (on all
-	# servers) in a channel via a private notice.
-	if ( my ($target) = $what =~ /^\.who (.+)/ ) {
-		if($#users>=0){}else{
-			$kernel->post( $sender => privmsg => $nick => "*** Error retrieving user list.  Please try again." );
+		# Only display information commands if they are turned on.
+		if($INFORMATION_CMDS==1){
+			$kernel->post( $sender => privmsg => $nick => $BOT_OUTPUT_SYMBOL.".version			Display software version" );
+			$kernel->post( $sender => privmsg => $nick => $BOT_OUTPUT_SYMBOL.".who CHANNEL			Display a list of users in CHANNEL" );
+			$kernel->post( $sender => privmsg => $nick => $BOT_OUTPUT_SYMBOL.".links			List the servers currently linked" );
 		}
-		my @ulist = ();
-		foreach my $u (@users) {
-			my @ua = @{$u};
-			if($ua[USER_CHANNEL] eq $target) {
-				my $n = $ua[USER_NICK];
-				my $s = $ua[USER_SERVER];
-				if(($ua[USER_IS_VOICED]==1)&&($ua[USER_IS_AN_OP]==0)){ $n='+'.$n; }
-				if($ua[USER_IS_AN_OP]==1){ $n='@'.$n; }
-				push(@ulist,"$n ($s)" );
-			}
+
+		# Only display private message commands if they are turned on.
+		if($PRIVATE_MESSAGE == 1){
+			$kernel->post( $sender => privmsg => $nick => $BOT_OUTPUT_SYMBOL.".private USER MSG		Sends a private message via the link" );
+			$kernel->post( $sender => privmsg => $nick => $BOT_OUTPUT_SYMBOL.".p USER MSG			Sends a private message via the link" );
 		}
-		if($#ulist>=0){}else{
-			$kernel->post( $sender => privmsg => $nick => "*** No users found" );
+		
+		# Admin-only commands will only be displayed to users who are logged in as admins.
+		if(($ADMIN[0] eq $nick)&&($ADMIN[1] eq $hostmask)){
+			$kernel->post( $sender => privmsg => $nick => $BOT_OUTPUT_SYMBOL.".refresh			Refreshes the internal user list" );
+			$kernel->post( $sender => privmsg => $nick => $BOT_OUTPUT_SYMBOL.".logout			Log out of the bot" );
+		}
+		return undef;
+	}
+
+	# Only allow information commands if they are turned on.
+	if($INFORMATION_CMDS==1){
+		# .version
+		# Displays bot version
+		if( $what =~ /^\.version$/ ) {
+			$kernel->post( $sender => privmsg => $nick => $BOT_OUTPUT_SYMBOL."$APPLICATION $VERSION ($RELEASE)" );
 			return undef;
 		}
-		foreach my $ul (@ulist) {
-			$kernel->post( $sender => privmsg => $nick => "*** $ul" );
+
+		# .links
+		# Display what servers the bot is connected to
+		if( $what =~ /^\.links$/ ) {
+			my @s = get_server_list();
+			$kernel->post( $sender => privmsg => $nick => $BOT_OUTPUT_SYMBOL."This channel is linked to ".join(", ",@s) );
+			return undef;
 		}
-		return undef;
+
+		# .who CHANNEL
+		# Causes the bot to send a list of all users (on all
+		# servers) in a channel via a private notice.
+		if ( my ($target) = $what =~ /^\.who (.+)/ ) {
+
+			# If the internal userlist is empty, display an error and tell the user to try again later.
+			if($#USERS>=0){}else{
+				$kernel->post( $sender => privmsg => $nick => $BOT_OUTPUT_SYMBOL."Error retrieving user list.  Please try again." );
+				return undef;
+			}
+
+			# Compile the userlist for display. Op'd users get a "@" in front of their nick, and voice'd users get a "+" in
+			# in front of their nick.
+			my @ulist = get_channel_user_list($target);
+
+			# Compiled userlist is empty, so let the user know (this probably won't happen;  empty user list should be caught by the
+			# first conditional in this statement) and exit the statement
+			if($#ulist>=0){}else{
+				$kernel->post( $sender => privmsg => $nick => $BOT_OUTPUT_SYMBOL."No users found" );
+				return undef;
+			}
+
+			# Send the compiled userlist to the user
+			foreach my $ul (@ulist) {
+				$kernel->post( $sender => privmsg => $nick => $BOT_OUTPUT_SYMBOL."$ul" );
+			}
+
+			return undef;
+		}
 	}
 }
 
@@ -569,20 +595,32 @@ sub irc_public {
 	my $server_name = $poco->server_name();
 
 	# .refresh
-	# Refreshes the bot's user list manually
+	# Refreshes the bot's internal user list manually.
+	# Only available to admins.
 	if( $what =~ /^\.refresh$/ ) {
-		refresh_channel_user_list($server_name,$channel,$kernel,$sender);
-		$kernel->post( $sender => notice => $nick => "*** User list refreshed." );
+		if(($ADMIN[0] eq $nick)&&($ADMIN[1] eq $hostmask)){
+			update_user_list($server_name,$channel,$kernel,$sender);
+			$kernel->post( $sender => notice => $nick => $BOT_OUTPUT_SYMBOL."User list refreshed." );
+		}
 		return undef;
 	}
 
 	# .mute
-	# "Mutes" a channel
+	# "Mutes" a channel;  the channel on the server where this command is issued is the only one "muted".
+	# Only available to admins.
+	# "Muted" channels won't send chat or join/part text to the patch network.
+	# Issued the "mute" channel again to "unmute".
 	if( $what =~ /^\.mute$/ ) {
-		if(($admin[0] eq $nick)&&($admin[1] eq $hostmask)){
+		if(($ADMIN[0] eq $nick)&&($ADMIN[1] eq $hostmask)){
 			my @new = ();
 			my $muted = 0;
-			foreach my $m (@mute) {
+
+			# Check the muted chanel list to see if this channel is in there.
+			foreach my $m (@MUTE) {
+
+				# Step through the mute list and look if the desired channel
+				# is on it;  create a copy of the mute list that contains all
+				# muted channels *except* for the desired channel.
 				my @ma = @{$m};
 				if(($ma[0] eq $channel)&&($ma[1] eq $server_name)){
 					$muted = 1;
@@ -590,15 +628,35 @@ sub irc_public {
 				}
 				push(@new,$m);
 			}
+
+			# @new now contains a list of all muted channels *except* for the channel
+			# being looked for.
+
+			# Mute/unmute the channel and let the channel know.
 			if($muted==1){
-				# Channel was already muted;  unmute it
-				@mute=@new;
-				$kernel->post( $sender => notice => $nick => "*** Channel $channel on $server_name unmuted." );
+				# Channel was already muted;  unmute it.
+
+				# Set the mute list to @new, since it's already been scrubbed of any
+				# reference to the desired channel.
+				@MUTE=@new;
+
+				# Now that the channel is off the muted list, the broadcast will reach it.
+				broadcast($BOT_OUTPUT_SYMBOL."Channel $channel on $server_name unmuted.",$channel,$server_name);
+
+				# Display/log the action.
+				display("$nick ($hostmask) unmuted $channel ($server_name)\n");
 			} else {
 				# Channel was not muted.  Mute it.
+
+				# Send the broadcast *before* the channel is muted, so the broadcast will reach it.
+				broadcast($BOT_OUTPUT_SYMBOL."Channel $channel on $server_name muted.",$channel,$server_name);
+
+				# Add the channel and server to the mute list.
 				my @entry = ($channel,$server_name);
-				push(@mute,\@entry);
-				$kernel->post( $sender => notice => $nick => "*** Channel $channel on $server_name muted." );
+				push(@MUTE,\@entry);
+
+				# Display/log the action.
+				display("$nick ($hostmask) muted $channel ($server_name)\n");
 			}
 			return undef;
 		}
@@ -606,66 +664,81 @@ sub irc_public {
 	}
 
 	# .help
-	# Displays help text.
+	# Displays help text via a private notice.
 	if( $what =~ /^\.help$/ ) {
-		$kernel->post( $sender => notice => $nick => "$APPLICATION IRC Bot" );
-		$kernel->post( $sender => notice => $nick => ".help		Display this text" );
-		$kernel->post( $sender => notice => $nick => ".version		Display software version" );
-		$kernel->post( $sender => notice => $nick => ".who		Display a list of users in the channel" );
-		$kernel->post( $sender => notice => $nick => ".links		Display the servers this channel is linked to" );
-		$kernel->post( $sender => notice => $nick => ".refresh		Manually refresh the internal user list" );
-		if(($admin[0] eq $nick)&&($admin[1] eq $hostmask)){
-			$kernel->post( $sender => notice => $nick => ".mute		Toggles channel muting" );
+
+		# Non-admin commands.
+		$kernel->post( $sender => notice => $nick => $BOT_OUTPUT_SYMBOL."$APPLICATION IRC Bot" );
+		$kernel->post( $sender => notice => $nick => $BOT_OUTPUT_SYMBOL.".help		Display this text" );
+
+		# Only display information commands if they are turned on.
+		if($INFORMATION_CMDS==1){
+			$kernel->post( $sender => notice => $nick => $BOT_OUTPUT_SYMBOL.".version		Display software version" );
+			$kernel->post( $sender => notice => $nick => $BOT_OUTPUT_SYMBOL.".who		Display a list of users in the channel" );
+			$kernel->post( $sender => notice => $nick => $BOT_OUTPUT_SYMBOL.".links		Display the servers this channel is linked to" );
 		}
+
+		# Admin-only commands will only be displayed to users who are logged in as admins.
+		if(($ADMIN[0] eq $nick)&&($ADMIN[1] eq $hostmask)){
+			$kernel->post( $sender => notice => $nick => $BOT_OUTPUT_SYMBOL.".refresh		Manually refresh the internal user list" );
+			$kernel->post( $sender => notice => $nick => $BOT_OUTPUT_SYMBOL.".mute		Toggles channel muting" );
+		}
+
 		return undef;
 	}
 
-	# .version
-	# Displays bot version
-	if( $what =~ /^\.version$/ ) {
-		$kernel->post( $sender => notice => $nick => "$APPLICATION $VERSION" );
-		return undef;
-	}
-
-	# .links
-	# Display what servers the bot is connected to
-	if( $what =~ /^\.links$/ ) {
-		my @s = get_server_list();
-		$kernel->post( $sender => notice => $nick => "This channel is linked to ".join(",",@s) );
-		return undef;
-	}
-
-	# .who
-	# Causes the bot to send a list of all users (on every
-	# server but the caller's server) via a private notice.
-	if( $what =~ /^\.who$/ ) {
-		if($#users>=0){}else{
-			$kernel->post( $sender => notice => $nick => "*** Error retrieving user list.  Please try again." );
-		}
-		my @ulist = ();
-		foreach my $u (@users) {
-			my @ua = @{$u};
-			if($ua[USER_CHANNEL] eq $channel) {
-				my $n = $ua[USER_NICK];
-				my $s = $ua[USER_SERVER];
-				if($s eq $server_name){ next; }
-				if(($ua[USER_IS_VOICED]==1)&&($ua[USER_IS_AN_OP]==0)){ $n='+'.$n; }
-				if($ua[USER_IS_AN_OP]==1){ $n='@'.$n; }
-				push(@ulist,"$n ($s)" );
-			}
-		}
-		if($#ulist>=0){}else{
-			$kernel->post( $sender => notice => $nick => "*** No users found" );
+	# Only allow information commands if they are turned on.
+	if($INFORMATION_CMDS==1){
+		# .version
+		# Displays bot version via a private notice.
+		if( $what =~ /^\.version$/ ) {
+			$kernel->post( $sender => notice => $nick => $BOT_OUTPUT_SYMBOL."$APPLICATION $VERSION ($RELEASE)" );
 			return undef;
 		}
-		foreach my $ul (@ulist) {
-			$kernel->post( $sender => notice => $nick => "*** $ul" );
+
+		# .links
+		# Display what servers the bot is connected to via a private notice.
+		if( $what =~ /^\.links$/ ) {
+			my @s = get_server_list();
+			$kernel->post( $sender => notice => $nick => $BOT_OUTPUT_SYMBOL."This channel is linked to ".join(",",@s) );
+			return undef;
 		}
-		#$kernel->post( $sender => notice => $nick => "*** ".join(", ",@ulist) );
-		return undef;
+
+		# .who
+		# Causes the bot to send a list of all users (on every
+		# server but the caller's server) to the calling user via a private notice.
+		if( $what =~ /^\.who$/ ) {
+
+			# If the internal userlist is empty, display an error and tell the user to try again later.
+			if($#USERS>=0){}else{
+				$kernel->post( $sender => notice => $nick => $BOT_OUTPUT_SYMBOL."Error retrieving user list.  Please try again." );
+			}
+
+			# Compile the userlist for display. Op'd users get a "@" in front of their nick, and voice'd users get a "+" in
+			# in front of their nick.
+			my @ulist = get_channel_user_list($channel);
+
+			# Compiled userlist is empty, so let the user know (this probably won't happen;  empty user list should be caught by the
+			# first conditional in this statement) and exit the statement.
+			if($#ulist>=0){}else{
+				$kernel->post( $sender => notice => $nick => $BOT_OUTPUT_SYMBOL."No users found." );
+				return undef;
+			}
+
+			# Send the compiled userlist to the user.
+			foreach my $ul (@ulist) {
+				$kernel->post( $sender => notice => $nick => $BOT_OUTPUT_SYMBOL."$ul" );
+			}
+
+			return undef;
+		}
 	}
 
-	broadcast_to_link("<$nick> $what",$channel,$server_name);
+	# Incoming chat doesn't contain a command, so pass the chat to the patch network and display to all users.
+	broadcast($BOT_OUTPUT_SYMBOL."<$nick> $what",$channel,$server_name);
+
+	# Display/log broadcasted chat
+	display("$channel $server_name <$nick> $what\n");
 
 	undef;
 }
@@ -676,21 +749,27 @@ sub irc_public {
 # Triggered whenever the bot's nick is already in use.
 sub irc_433 {
 	my ($kernel,$sender) = @_[KERNEL,SENDER];
-	if($current_nick eq $nickname) {
-		display("Changing nick to \"$alternate_nickname\"...\n");
-		$current_nick=$alternate_nickname;
-		foreach my $n (@network) {
+
+	# Bot's initial nick is in use, so try the alternate nickname...
+	if($CURRENT_NICK eq $NICKNAME) {
+		display("Changing nick to \"$ALTERNATE_NICK\"...\n");
+		$CURRENT_NICK=$ALTERNATE_NICK;
+		foreach my $n (@NETWORK) {
 			my @na = @{ $n };
-			$na[0]->post( $na[1] => nick => $current_nick );
+			$na[0]->post( $na[1] => nick => $CURRENT_NICK );
 		}
-	}elsif($current_nick eq $alternate_nickname){
-		$current_nick=$alternate_nickname.$$;
-		display("Changing nick to \"$current_nick\"...\n");
-		foreach my $n (@network) {
+
+	# Bot's alternate nick is in use, so append a random number
+	# to the altername nick and try again.
+	}elsif($CURRENT_NICK eq $ALTERNATE_NICK){
+		$CURRENT_NICK=$ALTERNATE_NICK.$$;
+		display("Changing nick to \"$CURRENT_NICK\"...\n");
+		foreach my $n (@NETWORK) {
 			my @na = @{ $n };
-			$na[0]->post( $na[1] => nick => $current_nick );
+			$na[0]->post( $na[1] => nick => $CURRENT_NICK );
 		}
-	}
+	}
+
 }
 
 # ===============
@@ -705,7 +784,7 @@ sub irc_ctcp_action {
 	my $poco = $sender->get_heap();
 	my $server_name = $poco->server_name();
 
-	broadcast_to_link("*** $nick $msg",$channel,$server_name);
+	broadcast($BOT_OUTPUT_SYMBOL."$nick $msg",$channel,$server_name);
 }
 
 # =======
@@ -719,7 +798,12 @@ sub irc_352 {
 	my $server = $poco_object->server_name();
 	my $nick = ( split / /, $data )[4];
 	my $code = ( split / /, $data )[5];
-	if($nick eq $current_nick){ return undef; }
+
+	# Bot's current username is left out of the list
+	if($nick eq $CURRENT_NICK){ return undef; }
+
+	# Check to see if the nick is voice'd or op'd, and add them
+	# to the user list
 	my $is_op = 0;
 	my $is_v = 0;
 	if ( $code =~ /\@/ ) { $is_op=1; }
@@ -735,16 +819,364 @@ sub irc_352 {
 # | SUPPORT SUBROUTINES START |
 # =============================
 
+# get_channel_user_list()
+# load_patchfile()
+# clean_blacklist()
+# add_user_to_blacklist()
+# is_user_blacklisted()
+# banner_ascii_graphic()
+# error()
 # display()
 # timestamp()
-# broadcast_to_link()
-# send_private_message()
+# broadcast()
+# private_message()
 # get_server_list()
-# parse_config_file()
-# config()
-# refresh_channel_user_list()
+# update_user_list()
 # remove_channel_from_user_list()
 # add_user_to_channel_user_list()
+
+# get_channel_user_list()
+# Syntax: get_channel_user_list($channel)
+# Arguments: 1 (scalar)
+# Returns:  Array
+# Description: Builds a user list, on all networks, for a
+#              specific channel.  List is "pretty";  it also contains whether
+#              a user is op'd and/or voice'd.
+sub get_channel_user_list {
+	my $channel = shift;
+
+	my @ulist = ();
+	foreach my $u (@USERS) {
+		my @ua = @{$u};
+		if($ua[USER_CHANNEL] eq $channel) {
+			my $n = $ua[USER_NICK];
+			my $s = $ua[USER_SERVER];
+			if($ua[USER_IS_VOICED]==1){ $n='+'.$n; }
+			if($ua[USER_IS_AN_OP]==1){ $n='@'.$n; }
+			push(@ulist,"$n ($s)" );
+		}
+	}
+
+	return @ulist;
+}
+
+# load_patchfile()
+# Syntax: load_patchfile($filename)
+# Arguments: 1 (scalar)
+# Returns:  Nothing
+# Description: Loads and parses a patchfile, which contains all the settings needed for
+#              the bot to operate.
+sub load_patchfile {
+	my $filename = shift;
+
+	display("Loading patchfile \"$filename\"...\n");
+
+	my @xchannels = ();
+	my @xservers = ();
+	my $password = '';
+	my $motd = '';
+	my $xnick = '';
+	my $xinfo = '';
+	my $xanick = '';
+
+	# Load and parse XML patchfile
+	my $tpp = XML::TreePP->new();
+	my $tree = $tpp->parsefile( $filename );
+
+	# ========================
+	# | PATCHFILE TAGS BEGIN |
+	# ========================
+
+	# Verbose tag
+	# Turns verbose mode on or off
+	# Not required
+	if(ref($tree->{patch}->{verbose}) eq 'ARRAY'){
+		error("Only one verbose tag per patchfile.");
+	}
+	if($tree->{patch}->{verbose}){
+		if( ($tree->{patch}->{verbose} eq "1") || (lc($tree->{patch}->{verbose}) eq "yes") || (lc($tree->{patch}->{verbose}) eq "on") ) {
+			$VERBOSE = 1;
+		}
+	}
+
+	# Private_messaging tag
+	# Turns verbose mode on or off
+	# Not required
+	if(ref($tree->{patch}->{private_messaging}) eq 'ARRAY'){
+		error("Only one private_messaging tag per patchfile.");
+	}
+	if($tree->{patch}->{private_messaging}){
+		if( ($tree->{patch}->{private_messaging} eq "1") || (lc($tree->{patch}->{private_messaging}) eq "yes") || (lc($tree->{patch}->{private_messaging}) eq "on") ) {
+			$PRIVATE_MESSAGE = 1;
+		} elsif ( ($tree->{patch}->{private_messaging} eq "0") || (lc($tree->{patch}->{private_messaging}) eq "no") || (lc($tree->{patch}->{private_messaging}) eq "off") ) {
+			$PRIVATE_MESSAGE = 0;
+		}
+	}
+
+	# Information tag
+	# Turns information commands on or off
+	# Not required
+	if(ref($tree->{patch}->{information}) eq 'ARRAY'){
+		error("Only one information tag per patchfile.");
+	}
+	if($tree->{patch}->{information}){
+		if( ($tree->{patch}->{information} eq "1") || (lc($tree->{patch}->{information}) eq "yes") || (lc($tree->{patch}->{information}) eq "on") ) {
+			$INFORMATION_CMDS = 1;
+		} elsif ( ($tree->{patch}->{information} eq "0") || (lc($tree->{patch}->{information}) eq "no") || (lc($tree->{patch}->{information}) eq "off") ) {
+			$INFORMATION_CMDS = 0;
+		}
+	}
+
+	# Timestamp tag
+	# Turns timestamps on logging and verbose messages on or off
+	# Not required
+	if(ref($tree->{patch}->{timestamp}) eq 'ARRAY'){
+		error("Only one timestamp tag per patchfile.");
+	}
+	if($tree->{patch}->{timestamp}){
+		if( ($tree->{patch}->{timestamp} eq "1") || (lc($tree->{patch}->{timestamp}) eq "yes") || (lc($tree->{patch}->{timestamp}) eq "on") ) {
+			$TIMESTAMP = 1;
+		} elsif ( ($tree->{patch}->{timestamp} eq "0") || (lc($tree->{patch}->{timestamp}) eq "no") || (lc($tree->{patch}->{timestamp}) eq "off") ) {
+			$TIMESTAMP = 0;
+		}
+	}
+
+	# Log tag
+	# Turns logging on or off
+	# Not required
+	if(ref($tree->{patch}->{log}) eq 'ARRAY'){
+		error("Only one log tag per patchfile.");
+	}
+	if($tree->{patch}->{log}){
+		$LOG = $tree->{patch}->{log};
+	}
+
+	# bot_chat_id tag
+	# Sets a symbol that is prefaced on every bot chat text
+	# Not required
+	# Default:  "*** "
+	if(ref($tree->{patch}->{bot_chat_id}) eq 'ARRAY'){
+		error("Only one bot_chat_id tag per patchfile.");
+	}
+	if($tree->{patch}->{bot_chat_id}){
+		$BOT_OUTPUT_SYMBOL = $tree->{patch}->{bot_chat_id};
+		if(substr($BOT_OUTPUT_SYMBOL, -1) != " "){
+			$BOT_OUTPUT_SYMBOL .= " ";
+		}
+	}
+
+	# Channel tag(s)
+	# Sets the IRC channel(s) to patch
+	# Required
+	if($tree->{patch}->{channel}){
+		if(ref($tree->{patch}->{channel}) eq 'ARRAY'){
+			foreach my $c (@{$tree->{patch}->{channel}}) {
+				push(@xchannels,$c);
+			}
+		} else {
+			push(@xchannels,$tree->{patch}->{channel});
+		}
+	} else {
+		error("Patchfile is missing a channel tag.");
+	}
+
+	# Server tag(s)
+	# Sets the IRC servers to patch, in "server:port" format
+	# Required
+	if($tree->{patch}->{server}){
+		if(ref($tree->{patch}->{server}) eq 'ARRAY'){
+			foreach my $c (@{$tree->{patch}->{server}}) {
+				push(@xservers,$c);
+			}
+		} else {
+			push(@xservers,$tree->{patch}->{server});
+		}
+	} else {
+		error("Patchfile is missing a server tag.");
+	}
+
+	# Password tag
+	# Sets the administration password
+	# Required
+	if(ref($tree->{patch}->{password}) eq 'ARRAY'){
+		error("Only one password tag per patchfile.");
+	}
+	if($tree->{patch}->{password}){
+		$password = $tree->{patch}->{password};
+	} else {
+		error("Patchfile is missing a password tag");
+	}
+
+	# Motd tag
+	# Sets the MOTD, either in a file or a string
+	# Not required
+	if(ref($tree->{patch}->{motd}) eq 'ARRAY'){
+		error("Only one MOTD tag per patchfile.");
+	}
+	if($tree->{patch}->{motd}){
+		if((-e $tree->{patch}->{motd})&&(-f $tree->{patch}->{motd})){
+			# MOTD is in a file;  load the file's contents as the MOTD
+			open(FILE,"<$tree->{patch}->{motd}") or return undef;
+			$motd = join('',<FILE>);
+			close FILE;
+		} else {
+			# MOTD is in the tag's text
+			$motd = $tree->{patch}->{motd};
+		}
+	}
+
+	# Nick tag
+	# Sets the bot's default nick
+	# Required
+	if(ref($tree->{patch}->{nick}) eq 'ARRAY'){
+		error("Only one nick tag per patchfile.");
+	}
+	if($tree->{patch}->{nick}){
+		$xnick = $tree->{patch}->{nick};
+	} else {
+		error('Patchfile is missing a "nick" tag');
+	}
+
+	# Alternate tag
+	# Sets the bot's alternate nick
+	# Required
+	if(ref($tree->{patch}->{alternate}) eq 'ARRAY'){
+		error("Only one alternate tag per patchfile.");
+	}
+	if($tree->{patch}->{alternate}){
+		$xanick = $tree->{patch}->{alternate};
+	} else {
+		error('Patchfile is missing a "alternate" tag');
+	}
+
+	# Ircname tag
+	# Set the bot's username
+	# Not required
+	if(ref($tree->{patch}->{ircname}) eq 'ARRAY'){
+		error("Only one ircname tag per patchfile.");
+	}
+	if($tree->{patch}->{ircname}){
+		$xinfo = $tree->{patch}->{ircname};
+	}
+
+	# ======================
+	# | PATCHFILE TAGS END |
+	# ======================
+
+	if($xnick ne ''){ $NICKNAME = $xnick;  $CURRENT_NICK= $NICKNAME; }
+	if($xinfo ne ''){ $USERNAME = $xinfo; }
+	if($xanick ne ''){ $ALTERNATE_NICK = $xanick; }
+
+	$MOTD = $motd;
+
+	$ADMIN_PASSWORD = $password;
+
+	foreach my $s (@xservers) {
+		my @e = split(':',$s);
+		my $server = '';
+		my $port = 6667;
+		if($#e==1){
+			$server = $e[0];
+			$port = $e[1];
+		} else {
+			$server = $e[0];
+		}
+		my %entry = {};
+		$entry{port} = $port;
+		$entry{channels} = \@xchannels;
+		$servers{$server} = \%entry;
+	}
+}
+
+# clean_blacklist()
+# Syntax: clean_blacklist()
+# Arguments: 0
+# Returns:  Nothing
+# Description: Removes any clients from the blacklist that have timed out.
+sub clean_blacklist {
+	my @cleaned = ();
+	foreach my $ent (@BLACKLIST){
+		my @e = @{$ent};
+		if ($e[BLACKLIST_LOCKOUT]<=$TIME){
+			# remove from blacklist
+			display($e[BLACKLIST_HOSTNAME]." removed from blacklist\n");
+		}else{
+			# keep on blacklist
+			push(@cleaned,\@e);
+		}
+	}
+	@BLACKLIST = @cleaned;
+}
+
+# add_user_to_blacklist()
+# Syntax: my $time = add_user_to_blacklist($hostmask)
+# Arguments: 1 (scalar)
+# Returns:  The length of the blacklist time in seconds
+# Description: Adds a user to the blacklist.  How long is a random amount of time,
+#              from a minimum of BLACKLIST_LENGTH_MINIMUM to a maximum of
+#              BLACKLIST_LENGTH_MAXIMUM, set in the constants at the beginning of
+#              the script.  Current settings allow for a minimum of 60 seconds to
+#              a maximum of 120 seconds.
+sub add_user_to_blacklist {
+	my $hostmask = shift;
+
+	my $timeout = BLACKLIST_LENGTH_MINIMUM + int(rand(BLACKLIST_LENGTH_MAXIMUM - BLACKLIST_LENGTH_MINIMUM));
+
+	if(is_user_blacklisted($hostmask)==0){
+		my @e = ($hostmask,$TIME+$timeout);
+		push(@BLACKLIST,\@e);
+		display("$hostmask added to blacklist for ".$timeout." seconds)\n");
+	}
+
+	return $timeout;
+}
+
+# is_user_blacklisted()
+# Syntax: is_user_blacklisted($hostmask)
+# Arguments: 1 (scalar)
+# Returns:  Scalar
+# Description: Checks to see if a client is on the blacklist; returns 1 if they
+#              are, 0 if not.
+sub is_user_blacklisted {
+	my $hostmask = shift;
+
+	foreach my $ent (@BLACKLIST){
+		my @e = @{$ent};
+		if ($e[BLACKLIST_HOSTNAME] eq $hostmask) {
+			return 1;
+		}
+	}
+	return 0;
+}
+
+# banner_ascii_graphic()
+# Syntax:  my $banner = banner_ascii_graphic()
+# Arguments: 0
+# Returns:  scalar
+# Description:  Returns the ASCII graphic for the banner.
+sub banner_ascii_graphic {
+	my $banner = <<'BANNER';
+    _                             __       __  
+   (_)_________      ____  ____ _/ /______/ /_ 
+  / / ___/ ___/_____/ __ \/ __ `/ __/ ___/ __ \
+ / / /  / /__/_____/ /_/ / /_/ / /_/ /__/ / / /
+/_/_/   \___/     / .___/\__,_/\__/\___/_/ /_/ 
+                 /_/
+BANNER
+	return $banner;
+}
+
+# error()
+# Syntax:  error("Here's my error text.");
+# Arguments: 1 (scalar)
+# Returns:  Nothing
+# Description:  Displays the desired error message followed
+#               by a newline, and exits.
+sub error {
+	my $text = shift;
+	print "$text\n";
+	exit 1;
+}
 
 # display()
 # Syntax:  display("Here is some text\n");
@@ -755,7 +1187,22 @@ sub irc_352 {
 #               accompanied by a timestamp.
 sub display {
 	my $text = shift;
-	if($verbose==1){ print timestamp()." $text"; }
+	if($VERBOSE==1){ 
+		if($TIMESTAMP==1){
+			print timestamp()." $text";
+		} else {
+			print "$text";
+		}
+	}
+	if($LOG ne ""){
+		open(FILE,">>$LOG") or die "Error writing to log file '$LOG'";
+		if($TIMESTAMP==1){
+			print FILE timestamp()." $text";
+		} else {
+			print FILE "$text";
+		}
+		close FILE;
+	}
 }
 
 # timestamp()
@@ -763,15 +1210,15 @@ sub display {
 # Arguments: 0
 # Returns:  scalar
 # Description:  Generates a timestamp for the current time/date,
-#               and returns it.
+#               and returns it, alond with the uptime, in seconds.
 sub timestamp {
 	my ($second, $minute, $hour, $dayOfMonth, $month, $yearOffset, $dayOfWeek, $dayOfYear, $daylightSavings) = gmtime();
 	my $year = 1900 + $yearOffset;
-	return "[$hour:$minute:$second $month/$dayOfMonth/$year]";
+	return "[$hour:$minute:$second $month/$dayOfMonth/$year $TIME".'s'."]";
 }
 
-# broadcast_to_link()
-# Syntax:  broadcast_to_link("Hello world!","#channel","irc.undernet.org");
+# broadcast()
+# Syntax:  broadcast("Hello world!","#channel","irc.undernet.org");
 # Arguments: 3 (scalar,scalar,scalar)
 # Returns:  Nothing
 # Description:  This will send a text message to the "link",
@@ -780,17 +1227,17 @@ sub timestamp {
 #               to send, the second is the channel to send it
 #               to, and the third is the server where the message
 #               originates from.
-sub broadcast_to_link {
+sub broadcast {
 	my $message = shift;
 	my $channel = shift;
 	my $server = shift;
 	
-	foreach my $m (@mute) {
+	foreach my $m (@MUTE) {
 		my @mu = @{$m};
 		if(($mu[0] eq $channel)&&($mu[1] eq $server)){ return; }
 	}
 
-	foreach my $n (@network) {
+	foreach my $n (@NETWORK) {
 		my @ent = @{ $n };
 		my $poco = $ent[1]->get_heap();
 		my $name = $poco->server_name();
@@ -800,14 +1247,14 @@ sub broadcast_to_link {
 	}
 }
 
-# send_private_message()
-# Syntax:  send_private_message($target,$message,$author,$kernel,$sender);
+# private_message()
+# Syntax:  private_message($target,$message,$author,$kernel,$sender);
 # Arguments:  5 (scalar,scalar,scalar,POE kernel,scalar)
 # Returns:  Nothing
 # Description:  Sends a private message to a specific user on the network.
 #               If necessary, the user will be prompted for the target user's
 #               server.
-sub send_private_message {
+sub private_message {
 	my $target = shift;
 	my $message = shift;
 	my $author = shift;
@@ -817,7 +1264,7 @@ sub send_private_message {
 	my $multiple_targets = -1;
 	my $server = '';
 
-	foreach my $u (@users) {
+	foreach my $u (@USERS) {
 		my @ua = @{$u};
 		if(lc($ua[0]) eq lc($target)){
 			$multiple_targets=$multiple_targets+1;
@@ -827,7 +1274,7 @@ sub send_private_message {
 
 	my @s = split(' ',$message);
 	if($#s>=1){
-		foreach my $n (@network) {
+		foreach my $n (@NETWORK) {
 			my @ent = @{ $n };
 			my $poco = $ent[1]->get_heap();
 			my $name = $poco->server_name();
@@ -841,17 +1288,17 @@ sub send_private_message {
 	}
 
 	if($multiple_targets>=1){
-		$kernel->post( $sender => notice => $author => "*** Multiple users named \"$target\" found." );
-		$kernel->post( $sender => notice => $author => "*** Try \".private USERNAME SERVER MESSAGE" );
+		$kernel->post( $sender => notice => $author => $BOT_OUTPUT_SYMBOL."Multiple users named \"$target\" found." );
+		$kernel->post( $sender => notice => $author => $BOT_OUTPUT_SYMBOL."Try \".private USERNAME SERVER MESSAGE" );
 		return;
 	}
 
-	foreach my $n (@network) {
+	foreach my $n (@NETWORK) {
 		my @ent = @{ $n };
 		my $poco = $ent[1]->get_heap();
 		my $name = $poco->server_name();
 		if($name eq $server) {
-			$ent[0]->post( $ent[1] => notice => $target => "*** $author -> $message" );
+			$ent[0]->post( $ent[1] => notice => $target => $BOT_OUTPUT_SYMBOL."$author -> $message" );
 		}
 	}
 }
@@ -864,7 +1311,7 @@ sub send_private_message {
 #               bot is connected to.
 sub get_server_list {
 	my @s = ();
-	foreach my $n (@network) {
+	foreach my $n (@NETWORK) {
 		my @ent = @{ $n };
 		my $poco = $ent[1]->get_heap();
 		my $name = $poco->server_name();
@@ -873,86 +1320,13 @@ sub get_server_list {
 	return @s;
 }
 
-# parse_config_file()
-# Syntax:  parse_config_file($config_file_contents);
-# Arguments:  1 (scalar)
-# Returns:  Nothing
-# Description:  Parses a config file and uses it to set the
-#               bot's configuration.
-sub parse_config_file {
-	my $data = shift;
-
-	my @servlist = ();
-
-	foreach my $line (split("\n",$data)) {
-		chomp $line;
-		$line=~s/^\s+//;
-		if(index($line,'#')==0){ next; }
-		my @l = split('=',$line);
-		if($#l>=1){
-			my $setting = lc(shift @l);
-			my $value = join('=',@l);
-			#if($setting eq "nickname"){ $nickname = $value; $current_nick=$nickname; }
-			#if($setting eq "alternate"){ $alternate_nickname = $value; }
-			#if($setting eq "ircname"){ $ircname = $value; }
-			if($setting eq "verbose"){ $verbose = $value; }
-			#if($setting eq "password"){ $admin_password = $value; }
-			#if($setting eq "motd"){ $greeting_file = $value; }
-			#if($setting eq "send_motd"){ $do_greeting = $value; }
-			#if($setting eq "use_language"){ $language = $value; }
-			#if($setting eq "languages"){ $language_location = $value; }
-			#if($setting eq "servers"){
-			#	foreach my $c (split(',',$value)) {
-			#		push(@servlist,$c);
-			#	}
-			#}
-			#if($setting eq "channels"){
-			#	foreach my $c (split(',',$value)) {
-			#		push(@chanlist,$c);
-			#	}
-			#}
-		}
-	}
-
-	#foreach my $s (@servlist) {
-	#	my @e = split(':',$s);
-	#	my $server = '';
-	#	my $port = 6667;
-	#	if($#e==1){
-	#		$server = $e[0];
-	#		$port = $e[1];
-	#	} else {
-	#		$server = $e[0];
-	#	}
-	#	my %entry = {};
-	#	$entry{port} = $port;
-	#	$entry{channels} = \@chanlist;
-	#	$servers{$server} = \%entry;
-	#}
-}
-
-# config()
-# Syntax:  config($filename);
-# Arguments:  1 (scalar)
-# Returns:  Nothing
-# Description:  Opens a file, reads in its contents, are pass them
-#               to parse_config_file() for parsing.
-sub config {
-	my $config_file = shift;
-	open(FILE,"<$config") or die "Error reading configuration file (\"$config\")";
-	my $d = join('',<FILE>);
-	parse_config_file($d);
-	close FILE;
-	
-}
-
-# refresh_channel_user_list()
-# Syntax:  refresh_channel_user_list("irc.undernet.org","#channel",$kernel,$sender);
+# update_user_list()
+# Syntax:  update_user_list("irc.undernet.org","#channel",$kernel,$sender);
 # Arguments:  4 (scalar,scalar,POE kernel,scalar)
 # Returns:  Nothing
 # Description:  "Refreshes" a channel's userlist (by deleting it and rebuilding it
 #               with /whois data)
-sub refresh_channel_user_list {
+sub update_user_list {
 	my $server = shift;
 	my $channel = shift;
 	my $kernel = shift;
@@ -972,11 +1346,11 @@ sub remove_channel_from_user_list {
 	my $server = shift;
 	my $chan = shift;
 	my @new = ();
-	foreach my $e (@users) {
+	foreach my $e (@USERS) {
 		my @ea = @{ $e };
 		if(($ea[2] eq $server)&&($ea[1] eq $chan)){}else{ push(@new,$e); }
 	}
-	@users=@new;
+	@USERS=@new;
 }
 
 # add_user_to_channel_user_list()
@@ -991,21 +1365,21 @@ sub add_user_to_channel_user_list {
 	my $is_an_op = shift;
 	my $is_voiced = shift;
 
-	if($nick eq $current_nick){ return; }
+	if($nick eq $CURRENT_NICK){ return; }
 
 	my $counter = 0;
-	foreach my $u (@users) {
+	foreach my $u (@USERS) {
 		my @ua = @{ $u };
 		if(($ua[0] eq $nick)&&($ua[1] eq $channel)&&($ua[2] eq $server)){
 			my @entry = ( $nick,$channel,$server,$is_an_op,$is_voiced, $TIME );
-			$users[$counter] = \@entry;
+			$USERS[$counter] = \@entry;
 			return;
 		}
 		$counter=$counter+1;
 	}
 
 	my @entry = ( $nick,$channel,$server,$is_an_op,$is_voiced, $TIME );
-	push(@users,\@entry);
+	push(@USERS,\@entry);
 }
 
 # ===========================
@@ -1848,7 +2222,3 @@ sub code_to_utf8 {
     return shift if scalar @_;      # default value
     sprintf( '&#x%04X;', $code );
 }
-
-
-
-

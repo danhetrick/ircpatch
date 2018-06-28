@@ -2,6 +2,8 @@
 
 **irc-patch** is an IRC bot that "patches" two (or more) IRC channels together.  Features include cross-server private messaging, multiple server and channel support, logging, XML support for patchfiles, user and channel management, and much more.  All chat on each channel, including CTCP "action" messages, will be passed on to all the other servers in the patch.  Basically, you can have the bot connect channels on any server to any other server, and all the chat messages will be passed on.
 
+## Patchfiles
+
 Setting for the relay are handled by XML files called *patchfiles*; they contain all the information needed for *irc-patch.pl* to connect any number of servers and channels together into a single network.  The root element for a patchfile is **patch**, and all other elements are children of the root.
 
 [irc-patch.pl](https://github.com/danhetrick/ircpatch/blob/unstable/irc-patch.pl "irc-patch.pl") is the main program, a Perl script.  To use, either create a patchfile named *default.patch* in the same directory as the script, and run it, or create a patchfile with a different name and run *irc-patch.pl* with the patchfile's filename as the first (and only) argument.
@@ -38,11 +40,15 @@ Setting for the relay are handled by XML files called *patchfiles*; they contain
         <alternate>irc-patch01525</alternate>
     </patch>
 
+## Administration
+
 Once *irc-patch* is up and running, send `.help` as a private message to the bot to see what commands are available for use.  In one of the channels the bot is monitoring, you can also send `.help` as a public message to see what public commands are available for use.  To log into the bot, send `.password <your password>` as a private message.  Once logged in, you can mute individual channels by sending `.mute` as a public message in the channel you want to mute, and `.mute` again to un-mute it.  Each channel is only muted on the server the command is issued in;  if you have three channels linked, for example, sending a `.mute` public message will only mute the channel (on the server) the public message was issued on.  Muted channels will still receive chat text from other channels, their chat text will simply not be relayed to the rest of the network.
 
 To send a private message to someone in any of the connected channels, send a private message to the bot with `.private <nick> <message>`, or `.p <nick> <message>`;  the message will be relayed by the bot to the appropriate user.  If more than one person is using the same nick, the bot will request that you specify what server the desired nick is using, with `.private <nick> <server> <message>`, or `.p <nick> <server> <message>`.
 
-*Commands available in public chat:*
+There are six (6) commands available via public message, and eight (8) commands available via private message.  All command output is relayed to the calling user via notice.  Many of the commands can be disabled via patchfile; disabled commands won't be displayed via `.help`.
+
+*Commands available via public message:*
  * `.help` - Displays help text.
  * `.version` - Displays the bot's version.  Can be disabled via patchfile.
  * `.who` - Displays a list of all remote users in the channel.  Can be disabled via patchfile.
@@ -55,7 +61,7 @@ To send a private message to someone in any of the connected channels, send a pr
  * `.version` - Displays the bot's version.  Can be disabled via patchfile.
  * `.who CHANNEL` - Displays a list of all remote users in a given channel.  Can be disabled via patchfile.
  * `.links` - Displays the servers the bot is connected to.  Can be disabled via patchfile.
- * `.admin *PASSWORD*` - Logs in to the bot for administration.
+ * `.admin PASSWORD` - Logs in to the bot for administration.
  * `.logout` - Logs out of the bot.  Restricted to administrators.
  * `.refresh` - Refreshes the remote user list.  Restricted to administrators.
  * `.private NICK MESSAGE` or `.private NICK SERVER MESSAGE` - Sends a private message to a user via the bot.  If more than one user shares the same nick, the bot will prompt the sender for the target's server.  Can be disabled via patchfile.

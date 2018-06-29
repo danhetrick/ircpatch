@@ -72,7 +72,7 @@ Let's create a patchfile that connects a channel named "#patchnet" on [Undernet]
 
 I save the patchfile to my home directory, `/home/dhetrick`, the same place I've saved `irc-patch.pl`.  I open up a terminal, and start up **irc-patch**:
 
-    dhetrick@desktop:/home/dhetrick$ irc-patch.pl patchnet.patch
+    dhetrick@desktop:/home/dhetrick$ perl irc-patch.pl patchnet.patch
         _                             __       __
        (_)_________      ____  ____ _/ /______/ /_
       / / ___/ ___/_____/ __ \/ __ `/ __/ ___/ __ \

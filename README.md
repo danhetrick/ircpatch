@@ -148,8 +148,12 @@ Now, my channel relay network is up and running!  If any clients join "#patchnet
 
 Any questions not answered here can be answered by taking a look at the source code of *irc-patch.pl*.  It is heavily commented, and I tried to explain everything the bot does, and, more importantly, *why*.  If the source code doesn't answer your questions, feel free to drop me an email at [dhetrick@gmail.com](mailto:dhetrick@gmail.com).
 
+## Why?
+
+To be honest, I created **irc-patch** out of an unusual personal need.  I was trying to find some friends on IRC after not speaking to them for some time, and the server, network, and channel where we normally met had been changed.  I could hang out in random IRC channels, waiting to see who showed up, or I could figure out a way to watch a bunch of different channels on a bunch of different networks at the same time.  I used the first version of **irc-patch** to watch 10 different channels on 12 different networks;  eventually, I found my IRC friends, and shut down the bot.  Fast forward 10 years, and I found this script in one of my backup drives.  One thing led to another, and I decided to make this a *real* IRC bot, with a whole bunch of functionality that I found useful.  I uploaded the script to GitHub, and started fixing and updating the code:  **irc-patch** was born.
+
 ## License
 
-*irc-patch* is free software; you can redistribute it and/or modify it under the same terms as Perl itself.
+**irc-patch** is free software; you can redistribute it and/or modify it under the same terms as Perl itself.
 
 Also includes XML::TreePP by Yusuke Kawasaki, built into the program rather than as a separate library.  It's licensed via the same license this program, and Perl, uses.

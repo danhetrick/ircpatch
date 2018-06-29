@@ -6,6 +6,12 @@
 
 **irc-patch** will run on any platform that Perl and POE can run on.  Development was performed on both Windows 10 and Debian linux, as was testing.
 
+## Table of Contents
+
+  * [Requirements](#Requirements)
+  * [Patchfiles](#Patchfiles)
+  * [Message of the Day](#Message-of-the-Day-(MOTD))
+
 ## Requirements
 
 __*Perl*__, __*POE*__, and __*POE::Component::IRC.*__

@@ -513,7 +513,7 @@ sub irc_msg {
 		# Non-admin commands.
 		$kernel->post( $sender => privmsg => $nick => $BOT_OUTPUT_SYMBOL."$APPLICATION IRC Bot" );
 		$kernel->post( $sender => privmsg => $nick => $BOT_OUTPUT_SYMBOL.".help			Display this text" );
-		$kernel->post( $sender => privmsg => $nick => $BOT_OUTPUT_SYMBOL.".admin PASSWORD			Logs you in as a bot admin" );
+		$kernel->post( $sender => privmsg => $nick => $BOT_OUTPUT_SYMBOL.".login PASSWORD			Logs you in as a bot admin" );
 
 		# Only display information commands if they are turned on.
 		if($INFORMATION_CMDS==1){

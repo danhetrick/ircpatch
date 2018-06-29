@@ -51,6 +51,48 @@ Setting for *irc-patch.pl* are handled by XML files called *patchfiles*; they co
 
 This patchfile, although valid, won't really do anything much;  as the bot isn't connected to any other servers, no chat will be broadcast, and private messaging won't function properly.
 
+## Message of the Day (MOTD)
+
+The message of the day features several symbols that be used to customize the greeting.  The symbols are interpolated right before they are sent, so you can customize your MOTD for every user!  The MOTD is sent to every user who joins a channel the bot is in.  There are six (6) symbols available for use:
+
+* `%CHANNEL%` - Replaced with the name of the channel the MOTD recipient has joined.
+* `%NICK%` - Replaced with the joining user's nick.
+* `%HOSTMASK` - Replaced with the joining user's hostmask.
+* `%SERVER%` - Replaced with the server the joining user's on.
+* `%NETWORK%` - Replaced with a list of servers the bot's connected to.
+* `%USERS%` - Replaced with a list of all remote users in the channel being joined.
+
+## Administration
+
+Once *irc-patch* is up and running, send `.help` as a private message to the bot to see what commands are available for use.  In one of the channels the bot is monitoring, you can also send `.help` as a public message to see what public commands are available for use.  To log into the bot, send `.password <your password>` as a private message.  Once logged in, you can mute individual channels by sending `.mute` as a public message in the channel you want to mute, and `.mute` again to un-mute it.  Each channel is only muted on the server the command is issued in;  if you have three channels linked, for example, sending a `.mute` public message will only mute the channel (on the server) the public message was issued on.  Muted channels will still receive chat text from other channels, their chat text will simply not be relayed to the rest of the network.
+
+To send a private message to someone in any of the connected channels, send a private message to the bot with `.private NICK MESSAGE`, or `.p NICK MESSAGE`;  the message will be relayed by the bot to the appropriate user.  If more than one person is using the same nick, the bot will request that you specify what server the desired nick is using, with `.private NICK SERVER MESSAGE`, or `.p NICK SERVER MESSAGE`.
+
+There are six (6) commands available via public message, and eight (8) commands available via private message.  All command output is relayed to the calling user via notice.  Many of the commands can be disabled via patchfile; disabled commands won't be displayed via `.help`.
+
+*Commands available via public message:*
+ * `.help` - Displays help text.
+ * `.version` - Displays the bot's version.  Can be disabled via patchfile.
+ * `.who` - Displays a list of all remote users in the channel.  Can be disabled via patchfile.
+ * `.links` - Displays the servers the bot is connected to.  Can be disabled via patchfile.
+ * `.refresh` - Refreshes the remote user list.  Restricted to administrators.
+ * `.mute` - Mutes the channel (no public chat is relayed to the network).  Issue again to unmute.  Restricted to administrators.
+
+*Commands availiable via private message:*
+ * `.help` - Displays help text.
+ * `.version` - Displays the bot's version.  Can be disabled via patchfile.
+ * `.who CHANNEL` - Displays a list of all users in a given channel.  Can be disabled via patchfile.
+ * `.links` - Displays the servers the bot is connected to.  Can be disabled via patchfile.
+ * `.login PASSWORD` - Logs in to the bot for administration.  Only one user can be logged into the bot at a time.
+ * `.logout` - Logs out of the bot.  Restricted to administrators.
+ * `.refresh` - Refreshes the remote user list.  Restricted to administrators.
+ * `.private NICK MESSAGE` or `.private NICK SERVER MESSAGE` - Sends a private message to a user via the bot.  If more than one user shares the same nick, the bot will prompt the sender for the target's server.  Can be disabled via patchfile.
+ * `.p NICK MESSAGE` - The same as the `.private` command.
+
+## Blacklist
+
+If a user tries to log into the bot, and provides the wrong password, they'll be put on the *blacklist*.  Blacklisted users can't try to log in for a short time period, selected at random from between 60-120 seconds.  Once the user's "timeout" expires, they can log in like normal.  The blacklist *only* effects users that have provided a wrong password; other users can log in like normal.  Users on the blacklist can also issue other commands, they just can't log in.
+
 ## Example Usage
 
 Let's create a patchfile that connects a channel named "#patchnet" on [Undernet](http://www.undernet.org), [EFnet](http://www.efnet.org), and [GameSurge](https://gamesurge.net), three different, separate IRC networks.  Since I'm located in the US, I'm going to pick three servers located in the US (more specifically, in Chicago, IL), one on each network.  I've selected `Chicago.IL.US.Undernet.org` on the Undernet network, `irc.servercentral.net` on the EFnet network, and `VortexServers.IL.US.GameSurge.net` on the GameSurge network;  I'll use the default port `6667` on each server.  I want to use **irc-patch** with minimal functionality, so I'm going to disable the information commands, but leave private messaging turned on.  I also want to use logging, and will log to a file named `/home/dhetrick/ircpatch.txt`.  I'll set the administration password to `sc00byd00`, and the bot's nickname to `patchbot`.  I'm going to open up a file named `patchnet.patch`, and enter the following into it:
@@ -96,48 +138,6 @@ I fire up my IRC client, and join "#patchnet" on Undernet, and can see my action
     [6:29:29 5/29/2018 186s] wraithnix joined channel #patchnet (Chicago.IL.US.Undernet.org)
 
 Now, my channel relay network is up and running!  If any clients join "#patchnet" on Undernet, EFnet, or GameSurge, they'll be able to chat to each other, and send private messages to each other.  Everything displayed to the console will be contained in `/home/dhetrick/ircpatch.txt`.
-
-## Message of the Day (MOTD)
-
-The message of the day features several symbols that be used to customize the greeting.  The symbols are interpolated right before they are sent, so you can customize your MOTD for every user!  The MOTD is sent to every user who joins a channel the bot is in.  There are six (6) symbols available for use:
-
-* `%CHANNEL%` - Replaced with the name of the channel the MOTD recipient has joined.
-* `%NICK%` - Replaced with the joining user's nick.
-* `%HOSTMASK` - Replaced with the joining user's hostmask.
-* `%SERVER%` - Replaced with the server the joining user's on.
-* `%NETWORK%` - Replaced with a list of servers the bot's connected to.
-* `%USERS%` - Replaced with a list of all remote users in the channel being joined.
-
-## Administration
-
-Once *irc-patch* is up and running, send `.help` as a private message to the bot to see what commands are available for use.  In one of the channels the bot is monitoring, you can also send `.help` as a public message to see what public commands are available for use.  To log into the bot, send `.password <your password>` as a private message.  Once logged in, you can mute individual channels by sending `.mute` as a public message in the channel you want to mute, and `.mute` again to un-mute it.  Each channel is only muted on the server the command is issued in;  if you have three channels linked, for example, sending a `.mute` public message will only mute the channel (on the server) the public message was issued on.  Muted channels will still receive chat text from other channels, their chat text will simply not be relayed to the rest of the network.
-
-To send a private message to someone in any of the connected channels, send a private message to the bot with `.private NICK MESSAGE`, or `.p NICK MESSAGE`;  the message will be relayed by the bot to the appropriate user.  If more than one person is using the same nick, the bot will request that you specify what server the desired nick is using, with `.private NICK SERVER MESSAGE`, or `.p NICK SERVER MESSAGE`.
-
-There are six (6) commands available via public message, and eight (8) commands available via private message.  All command output is relayed to the calling user via notice.  Many of the commands can be disabled via patchfile; disabled commands won't be displayed via `.help`.
-
-*Commands available via public message:*
- * `.help` - Displays help text.
- * `.version` - Displays the bot's version.  Can be disabled via patchfile.
- * `.who` - Displays a list of all remote users in the channel.  Can be disabled via patchfile.
- * `.links` - Displays the servers the bot is connected to.  Can be disabled via patchfile.
- * `.refresh` - Refreshes the remote user list.  Restricted to administrators.
- * `.mute` - Mutes the channel (no public chat is relayed to the network).  Issue again to unmute.  Restricted to administrators.
-
-*Commands availiable via private message:*
- * `.help` - Displays help text.
- * `.version` - Displays the bot's version.  Can be disabled via patchfile.
- * `.who CHANNEL` - Displays a list of all users in a given channel.  Can be disabled via patchfile.
- * `.links` - Displays the servers the bot is connected to.  Can be disabled via patchfile.
- * `.login PASSWORD` - Logs in to the bot for administration.  Only one user can be logged into the bot at a time.
- * `.logout` - Logs out of the bot.  Restricted to administrators.
- * `.refresh` - Refreshes the remote user list.  Restricted to administrators.
- * `.private NICK MESSAGE` or `.private NICK SERVER MESSAGE` - Sends a private message to a user via the bot.  If more than one user shares the same nick, the bot will prompt the sender for the target's server.  Can be disabled via patchfile.
- * `.p NICK MESSAGE` - The same as the `.private` command.
-
-## Blacklist
-
-If a user tries to log into the bot, and provides the wrong password, they'll be put on the *blacklist*.  Blacklisted users can't try to log in for a short time period, selected at random from between 60-120 seconds.  Once the user's "timeout" expires, they can log in like normal.  The blacklist *only* effects users that have provided a wrong password; other users can log in like normal.  Users on the blacklist can also issue other commands, they just can't log in.
 
 ## Contact
 

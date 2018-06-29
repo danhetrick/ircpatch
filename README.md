@@ -14,7 +14,8 @@
     * [minimal.patch](#minimal.patch)
   * [Message of the Day](#message-of-the-day)
   * [Administration](#administration)
-    * [Commands](#commands)
+    * [Commands available via public message](#commands-available-via-public-message)
+    * [Commands available via private message](#commands-available-via-private-message)
   * [Blacklist](#blacklist)
   * [Example Usage](#example-usage)
   * [Contact](#contact)
@@ -89,9 +90,8 @@ To send a private message to someone in any of the connected channels, send a pr
 
 There are six (6) commands available via public message, and eight (8) commands available via private message.  All command output is relayed to the calling user via notice.  Many of the commands can be disabled via patchfile; disabled commands won't be displayed via `.help`.
 
-### Commands
+### Commands available via public message
 
-*Commands available via public message:*
  * `.help` - Displays help text.
  * `.version` - Displays the bot's version.  Can be disabled via patchfile.
  * `.who` - Displays a list of all remote users in the channel.  Can be disabled via patchfile.
@@ -99,7 +99,8 @@ There are six (6) commands available via public message, and eight (8) commands 
  * `.refresh` - Refreshes the remote user list.  Restricted to administrators.
  * `.mute` - Mutes the channel (no public chat is relayed to the network).  Issue again to unmute.  Restricted to administrators.
 
-*Commands availiable via private message:*
+### Commands available via private message
+
  * `.help` - Displays help text.
  * `.version` - Displays the bot's version.  Can be disabled via patchfile.
  * `.who CHANNEL` - Displays a list of all users in a given channel.  Can be disabled via patchfile.

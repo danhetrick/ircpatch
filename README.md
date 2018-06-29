@@ -95,7 +95,7 @@ I fire up my IRC client, and join "#patchnet" on Undernet, and can see my action
 
     [6:29:29 5/29/2018 186s] wraithnix joined channel #patchnet (Chicago.IL.US.Undernet.org)
 
-Now, my channel relay network is up and running!  If any clients join "#patchnet" on Undernet, EFnet, or GameSurge, they'll be able to chat to each other, see who's online, and send private messages to each other.
+Now, my channel relay network is up and running!  If any clients join "#patchnet" on Undernet, EFnet, or GameSurge, they'll be able to chat to each other, see who's online, and send private messages to each other.  Everything displayed to the console will be contained in `/home/dhetrick/ircpatch.txt`.
 
 ## Message of the Day (MOTD)
 

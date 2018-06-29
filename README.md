@@ -173,7 +173,7 @@ As soon as I enter the channel, the bot sends me a welcome message:
 
     <patchbot> Welcome to #patchnet, wraithnix!
 
-Now, my channel relay network is up and running!  If any clients join "#patchnet" on Undernet, EFnet, or GameSurge, they'll be able to chat to each other, and send private messages to each other.  Everything displayed to the console will be contained in `/home/dhetrick/ircpatch.txt`.
+Now, my channel relay network is up and running!  If any clients join "#patchnet" on Undernet, EFnet, or GameSurge, they'll be able to chat to each other, and send private messages to each other.  Everything displayed on the console will be written to `/home/dhetrick/ircpatch.txt` (with the exception of the ASCII art and version information in the startup banner).
 
 ## Contact
 

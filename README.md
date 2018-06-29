@@ -31,7 +31,7 @@ Setting for *irc-patch.pl* are handled by XML files called *patchfiles*; they co
   * `motd` - Sets the relay's message of the day, sent to users when they first join a channel, as a private notice.  Default: "Welcome to %CHANNEL%, %NICK%!"
   * `private_messaging` - Turns private messaging on and off.  Default: **on**.
   * `timestamp` - Turns timestamping on and off.  Default: **on**.
-  * `information` - Turns informational commands on and off.  Default: **on**.
+  * `information` - Turns informational commands(`.version`, `.who`, and `.links`) on and off.  Default: **on**.
 
 *example.patch* is heavily commented, if there are further questions.
 

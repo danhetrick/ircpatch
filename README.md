@@ -4,7 +4,7 @@
 
 ## Summary
 
-**irc-patch** is an [IRC](https://en.wikipedia.org/wiki/Internet_Relay_Chat) [bot](https://en.wikipedia.org/wiki/IRC_bot) that "patches" two (or more) IRC [channels](https://en.wikipedia.org/wiki/Internet_Relay_Chat#Channels) together.  Features include cross-server private messaging, multiple server and channel support, logging, XML support for patchfiles, user and channel management, and much more.  All chat on each channel, including CTCP "action" messages, will be passed on to all the other servers in the patch.  Basically, you can have the bot connect channels on any server to any other server, and all the chat messages will be passed on.
+**irc-patch** is an [IRC](https://en.wikipedia.org/wiki/Internet_Relay_Chat) [bot](https://en.wikipedia.org/wiki/IRC_bot) that "patches" two (or more) IRC [channels](https://en.wikipedia.org/wiki/Internet_Relay_Chat#Channels) together.  Features include cross-server private messaging, multiple server and channel support, logging, XML support for patchfiles, user and channel management, and much more.  All chat on each channel, including [CTCP](https://tools.ietf.org/id/draft-oakley-irc-ctcp-01.html) "action" messages, will be passed on to all the other servers in the patch.  Basically, you can have the bot connect channels on any server to any other server, and all the chat messages will be passed on.
 
 **irc-patch** will run on any platform that Perl and POE can run on.  Development was performed on both Windows 10 and Debian linux, as was testing.
 
@@ -28,11 +28,15 @@
 
 __*Perl*__, __*POE*__, and __*POE::Component::IRC.*__
 
+## Usage
+
+  perl irc-patch.pl <FILENAME>
+
 ## Patchfiles
 
-Setting for *irc-patch.pl* are handled by XML files called *patchfiles*; they contain all the information needed for bot to connect any number of servers and channels together into a single network.  The root element for a patchfile is **patch**, and all other elements are children of the root.
+Settings for **irc-patch** are handled by [XML](https://en.wikipedia.org/wiki/XML) files called *patchfiles*; they contain all the information needed for bot to connect any number of servers and channels together into a single network.  The root element for a patchfile is **patch**, and all other elements are children of the root.
 
-[irc-patch.pl](https://github.com/danhetrick/ircpatch/blob/unstable/irc-patch.pl "irc-patch.pl") is the main program, a Perl script.  To use, either create a patchfile named *default.patch* in the same directory as the script, and run it, or create a patchfile with a different name and run *irc-patch.pl* with the patchfile's filename as the first (and only) argument.
+[irc-patch.pl](https://github.com/danhetrick/ircpatch/blob/unstable/irc-patch.pl "irc-patch.pl") is the main program, a Perl script.  To use, either create a patchfile named *default.patch* in the same directory as the script, and run *irc-patch.pl* with no arguments, or create a patchfile with a different name and run *irc-patch.pl* with the patchfile's filename as the first (and only) argument.
 
 ### example.patch
 

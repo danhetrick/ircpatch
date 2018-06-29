@@ -14,6 +14,8 @@
   * [Usage](#usage)
   * [Patchfiles](#patchfiles)
     * [example.patch](#example.patch)
+      * [Required patchfile elements](#required-patchfile-elements)
+      * [Optional patchfile elements](#optional-patchfile-elements)
     * [minimal.patch](#minimal.patch)
   * [Message of the Day](#message-of-the-day)
   * [Administration](#administration)
@@ -45,14 +47,14 @@ Settings for **irc-patch** are handled by [XML](https://en.wikipedia.org/wiki/XM
 
 [example.patch](https://github.com/danhetrick/ircpatch/blob/unstable/example.patch "example.patch") is an example of a patchfile:  every "server" element causes the bot to connect to a server, and every "channel" element causes the bot to join a channel.  Each patched channel will only be able to "talk" to their identically named counterparts (so, "#mychannel" on EFnet and "#mychannel" on Undernet, if patched, will only have messages relayed to each other;  if "#otherchannel" is patched on both networks by the same bot, it will only be able to "talk" to "#otherchannel", and "#mychannel" will only be able to "talk" to "#mychannel").  Patchfiles are XML based, and feature a number of elements, some required, and some not:
 
-* _Required patchfile elements_:
+### Required patchfile elements
   * `channel` - Sets the channel to relay.  At least one channel element is required.
   * `server` - Sets an IRC server to connect to (in *server:port* format).  At least one server element is required.
   * `password` - Sets the password for administrative functions.
   * `nick` - Sets the relay's IRC nickname.
   * `alternate` - Sets the relay's alternate IRC nick if the first is already taken.
   
-* _Optional patchfile elements_:
+### Optional patchfile elements
   * `verbose` - Turns verbose mode on and off.  Default: **on**.
   * `log` - Turns logging on and off.  Set to a filename to turn logging on; log data will be written to this file.  Default: **off**.
   * `bot_chat` - Sets a symbol to be prepended to all relay chat.  Default: "*** ".

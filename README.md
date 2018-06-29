@@ -11,6 +11,7 @@
 ## Table of Contents
 
   * [Requirements](#requirements)
+  * [Usage](#usage)
   * [Patchfiles](#patchfiles)
     * [example.patch](#example.patch)
     * [minimal.patch](#minimal.patch)

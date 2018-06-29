@@ -14,6 +14,7 @@
     * [minimal.patch](#minimal.patch)
   * [Message of the Day](#message-of-the-day)
   * [Administration](#administration)
+    * [Commands](#commands)
   * [Blacklist](#blacklist)
   * [Example Usage](#example-usage)
   * [Contact](#contact)
@@ -87,6 +88,8 @@ Once *irc-patch* is up and running, send `.help` as a private message to the bot
 To send a private message to someone in any of the connected channels, send a private message to the bot with `.private NICK MESSAGE`, or `.p NICK MESSAGE`;  the message will be relayed by the bot to the appropriate user.  If more than one person is using the same nick, the bot will request that you specify what server the desired nick is using, with `.private NICK SERVER MESSAGE`, or `.p NICK SERVER MESSAGE`.
 
 There are six (6) commands available via public message, and eight (8) commands available via private message.  All command output is relayed to the calling user via notice.  Many of the commands can be disabled via patchfile; disabled commands won't be displayed via `.help`.
+
+### Commands
 
 *Commands available via public message:*
  * `.help` - Displays help text.

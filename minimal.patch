@@ -1,12 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-	=================
-	| minimal.patch |
-	=================
-
-	This is an example of the least amount of tags necessary for a
-	valid patchfile.
--->
+<!-- minimal.patch -->
 <patch>
 	<channel>#ircpatch</channel>
 	<server>localhost:6667</server>

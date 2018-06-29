@@ -302,10 +302,6 @@ sub irc_join {
 	# Don't do anything if the joining client is the bot
 	if($nick eq $CURRENT_NICK){ return undef; }
 
-	# Display/log and broadcast join information
-	display("$nick joined channel $where ($server_name)\n");
-	broadcast("$nick has joined the channel ($server_name)",$where,$server_name);
-
 	# Update the internal user list
 	update_user_list($server_name,$where,$kernel,$sender);
 
@@ -333,6 +329,10 @@ sub irc_join {
 		# Send the MOTD to the joining client as a notice
 		$kernel->post( $sender => notice => $nick => $mg );	
 	}
+
+	# Display/log and broadcast join information
+	display("$nick joined channel $where ($server_name)\n");
+	broadcast("$nick has joined the channel ($server_name)",$where,$server_name);
 
 	undef;
 }

@@ -10,6 +10,8 @@
 
   * [Requirements](#requirements)
   * [Patchfiles](#patchfiles)
+    * [example.patch](#example.patch)
+    * [minimal.patch](#minimal.patch)
   * [Message of the Day](#message-of-the-day)
   * [Administration](#administration)
   * [Blacklist](#blacklist)
@@ -28,7 +30,9 @@ Setting for *irc-patch.pl* are handled by XML files called *patchfiles*; they co
 
 [irc-patch.pl](https://github.com/danhetrick/ircpatch/blob/unstable/irc-patch.pl "irc-patch.pl") is the main program, a Perl script.  To use, either create a patchfile named *default.patch* in the same directory as the script, and run it, or create a patchfile with a different name and run *irc-patch.pl* with the patchfile's filename as the first (and only) argument.
 
-###[example.patch](https://github.com/danhetrick/ircpatch/blob/unstable/example.patch "example.patch") is an example of a patchfile:  every "server" element causes the bot to connect to a server, and every "channel" element causes the bot to join a channel.  Eached patched channel will only be able to "talk" to their identically named counterparts (so, "#mychannel" on EFnet and "#mychannel" on Undernet, if patched, will only have messages relayed to each other;  if "#otherchannel" is patched on both networks by the same bot, it will only be able to "talk" to "#otherchannel", and "#mychannel" will only be able to "talk" to "#mychannel").  Patchfiles are XML based, and feature a number of elements, some required, and some not:
+### example.patch
+
+[example.patch](https://github.com/danhetrick/ircpatch/blob/unstable/example.patch "example.patch") is an example of a patchfile:  every "server" element causes the bot to connect to a server, and every "channel" element causes the bot to join a channel.  Eached patched channel will only be able to "talk" to their identically named counterparts (so, "#mychannel" on EFnet and "#mychannel" on Undernet, if patched, will only have messages relayed to each other;  if "#otherchannel" is patched on both networks by the same bot, it will only be able to "talk" to "#otherchannel", and "#mychannel" will only be able to "talk" to "#mychannel").  Patchfiles are XML based, and feature a number of elements, some required, and some not:
 
 * _Required patchfile elements_:
   * `channel` - Sets the channel to relay.  At least one channel element is required.
@@ -49,7 +53,9 @@ Setting for *irc-patch.pl* are handled by XML files called *patchfiles*; they co
 
 *example.patch* is heavily commented, if there are further questions.
 
-###[minimal.patch](https://github.com/danhetrick/ircpatch/blob/unstable/minimal.patch "minimal.patch") is an example of a patchfile with the minimum number of elements for it to be a valid patchfile.  Many of the other bot settings are left to their default values, with only the elements necessary for a network connection and chat relay.  It will connect to a single server hosted on the same computer hosting *irc-patch*, and connect to a single channel, "#ircpatch":
+### minimal.patch
+
+[minimal.patch](https://github.com/danhetrick/ircpatch/blob/unstable/minimal.patch "minimal.patch") is an example of a patchfile with the minimum number of elements for it to be a valid patchfile.  Many of the other bot settings are left to their default values, with only the elements necessary for a network connection and chat relay.  It will connect to a single server hosted on the same computer hosting *irc-patch*, and connect to a single channel, "#ircpatch":
 
     <?xml version="1.0" encoding="UTF-8"?>
     <patch>

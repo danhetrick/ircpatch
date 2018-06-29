@@ -95,7 +95,7 @@ If a user tries to log into the bot, and provides the wrong password, they'll be
 
 ## Example Usage
 
-Let's create a patchfile that connects a channel named "#patchnet" on [Undernet](http://www.undernet.org), [EFnet](http://www.efnet.org), and [GameSurge](https://gamesurge.net), three different, separate IRC networks.  Since I'm located in the US, I'm going to pick three servers located in the US (more specifically, in Chicago, IL), one on each network.  I've selected `Chicago.IL.US.Undernet.org` on the Undernet network, `irc.servercentral.net` on the EFnet network, and `VortexServers.IL.US.GameSurge.net` on the GameSurge network;  I'll use the default port `6667` on each server.  I want to use **irc-patch** with minimal functionality, so I'm going to disable the information commands, but leave private messaging turned on.  I also want to use logging, and will log to a file named `/home/dhetrick/ircpatch.txt`.  I'll set the administration password to `sc00byd00`, and the bot's nickname to `patchbot`.  I'm going to open up a file named `patchnet.patch`, and enter the following into it:
+Let's create a patchfile that connects a channel named "#patchnet" on [Undernet](http://www.undernet.org), [EFnet](http://www.efnet.org), and [GameSurge](https://gamesurge.net), three different, separate IRC networks.  Since I'm located in the US, I'm going to pick three servers located in the US (more specifically, in Chicago, IL), one on each network.  I've selected `Chicago.IL.US.Undernet.org` on the Undernet network, `irc.servercentral.net` on the EFnet network, and `VortexServers.IL.US.GameSurge.net` on the GameSurge network;  I'll use the default port `6667` on each server.  I want to use **irc-patch** with minimal functionality, so I'm going to disable the information commands, but leave private messaging turned on.  I also want to use logging, and will log to a file named `/home/dhetrick/ircpatch.txt`.  I'll set a short MOTD that welcomes new users to the channel:  "Welcome to %CHANNEL%, %NICK%!".  I'll set the administration password to `sc00byd00`, and the bot's nickname to `patchbot`.  I'm going to open up a file named `patchnet.patch`, and enter the following into it:
 
     <?xml version="1.0" encoding="UTF-8"?>
     <patch>
@@ -110,6 +110,7 @@ Let's create a patchfile that connects a channel named "#patchnet" on [Undernet]
         <information>off</information>
         <private_messaging>on</private_messaging>
         <log>/home/dhetrick/ircpatch.txt</log>
+        <motd>Welcome to %CHANNEL%, %NICK%!</motd>
     </patch>
 
 I save the patchfile to my home directory, `/home/dhetrick`, the same place I've saved `irc-patch.pl`.  I open up a terminal, and start up **irc-patch**:
@@ -136,6 +137,10 @@ I save the patchfile to my home directory, `/home/dhetrick`, the same place I've
 I fire up my IRC client, and join "#patchnet" on Undernet, and can see my action on **irc-patch**'s log:
 
     [6:29:29 5/29/2018 186s] wraithnix joined channel #patchnet (Chicago.IL.US.Undernet.org)
+
+As soon as I enter the channel, the bot sends me a welcome message:
+
+    <patchbot> Welcome to #patchnet, wraithnix!
 
 Now, my channel relay network is up and running!  If any clients join "#patchnet" on Undernet, EFnet, or GameSurge, they'll be able to chat to each other, and send private messages to each other.  Everything displayed to the console will be contained in `/home/dhetrick/ircpatch.txt`.
 

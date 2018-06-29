@@ -74,7 +74,7 @@ There are six (6) commands available via public message, and eight (8) commands 
 *Commands availiable via private message:*
  * `.help` - Displays help text.
  * `.version` - Displays the bot's version.  Can be disabled via patchfile.
- * `.who CHANNEL` - Displays a list of all remote users in a given channel.  Can be disabled via patchfile.
+ * `.who CHANNEL` - Displays a list of all users in a given channel.  Can be disabled via patchfile.
  * `.links` - Displays the servers the bot is connected to.  Can be disabled via patchfile.
  * `.login PASSWORD` - Logs in to the bot for administration.  Only one user can be logged into the bot at a time.
  * `.logout` - Logs out of the bot.  Restricted to administrators.

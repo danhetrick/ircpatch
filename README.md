@@ -47,6 +47,8 @@ Setting for *irc-patch.pl* are handled by XML files called *patchfiles*; they co
         <alternate>irc-patch01525</alternate>
     </patch>
 
+This patchfile, although valid, won't really do anything much;  as the bot isn't connected to any other servers, no chat will be broadcast, and private messaging won't function properly.
+
 ## Message of the Day (MOTD)
 
 The message of the day features several symbols that be used to customize the greeting.  The symbols are interpolated right before they are sent, so you can customize your MOTD for every user!  The MOTD is sent to every user who joins a channel the bot is in.  There are six (6) symbols available for use:

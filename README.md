@@ -1,3 +1,5 @@
+![IRC Patch](https://github.com/danhetrick/ircpatch/blob/docs/ircpatch_logo.png?raw=true)
+
 # irc-patch 0.15.25
 
 ## Summary

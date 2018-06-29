@@ -10,7 +10,13 @@
 
   * [Requirements](#requirements)
   * [Patchfiles](#patchfiles)
-  * [Message of the Day](#message-of-the-day-(motd))
+  * [Message of the Day](#message-of-the-day)
+  * [Administration](#administration)
+  * [Blacklist](#blacklist)
+  * [Example Usage](#example-usage)
+  * [Contact](#contact)
+  * [Why](#why)
+  * [License](#license)
 
 ## Requirements
 
@@ -22,7 +28,7 @@ Setting for *irc-patch.pl* are handled by XML files called *patchfiles*; they co
 
 [irc-patch.pl](https://github.com/danhetrick/ircpatch/blob/unstable/irc-patch.pl "irc-patch.pl") is the main program, a Perl script.  To use, either create a patchfile named *default.patch* in the same directory as the script, and run it, or create a patchfile with a different name and run *irc-patch.pl* with the patchfile's filename as the first (and only) argument.
 
-[example.patch](https://github.com/danhetrick/ircpatch/blob/unstable/example.patch "example.patch") is an example of a patchfile:  every "server" element causes the bot to connect to a server, and every "channel" element causes the bot to join a channel.  Eached patched channel will only be able to "talk" to their identically named counterparts (so, "#mychannel" on EFnet and "#mychannel" on Undernet, if patched, will only have messages relayed to each other;  if "#otherchannel" is patched on both networks by the same bot, it will only be able to "talk" to "#otherchannel", and "#mychannel" will only be able to "talk" to "#mychannel").  Patchfiles are XML based, and feature a number of elements, some required, and some not:
+###[example.patch](https://github.com/danhetrick/ircpatch/blob/unstable/example.patch "example.patch") is an example of a patchfile:  every "server" element causes the bot to connect to a server, and every "channel" element causes the bot to join a channel.  Eached patched channel will only be able to "talk" to their identically named counterparts (so, "#mychannel" on EFnet and "#mychannel" on Undernet, if patched, will only have messages relayed to each other;  if "#otherchannel" is patched on both networks by the same bot, it will only be able to "talk" to "#otherchannel", and "#mychannel" will only be able to "talk" to "#mychannel").  Patchfiles are XML based, and feature a number of elements, some required, and some not:
 
 * _Required patchfile elements_:
   * `channel` - Sets the channel to relay.  At least one channel element is required.
@@ -43,7 +49,7 @@ Setting for *irc-patch.pl* are handled by XML files called *patchfiles*; they co
 
 *example.patch* is heavily commented, if there are further questions.
 
-[minimal.patch](https://github.com/danhetrick/ircpatch/blob/unstable/minimal.patch "minimal.patch") is an example of a patchfile with the minimum number of elements for it to be a valid patchfile.  Many of the other bot settings are left to their default values, with only the elements necessary for a network connection and chat relay.  It will connect to a single server hosted on the same computer hosting *irc-patch*, and connect to a single channel, "#ircpatch":
+###[minimal.patch](https://github.com/danhetrick/ircpatch/blob/unstable/minimal.patch "minimal.patch") is an example of a patchfile with the minimum number of elements for it to be a valid patchfile.  Many of the other bot settings are left to their default values, with only the elements necessary for a network connection and chat relay.  It will connect to a single server hosted on the same computer hosting *irc-patch*, and connect to a single channel, "#ircpatch":
 
     <?xml version="1.0" encoding="UTF-8"?>
     <patch>
@@ -57,7 +63,7 @@ Setting for *irc-patch.pl* are handled by XML files called *patchfiles*; they co
 
 This patchfile, although valid, won't really do anything much;  as the bot isn't connected to any other servers, no chat will be broadcast, and private messaging won't function properly.
 
-## Message of the Day (MOTD)
+## Message of the Day
 
 The message of the day features several symbols that be used to customize the greeting.  The symbols are interpolated right before they are sent, so you can customize your MOTD for every user!  The MOTD is sent to every user who joins a channel the bot is in.  There are six (6) symbols available for use:
 
@@ -154,7 +160,7 @@ Now, my channel relay network is up and running!  If any clients join "#patchnet
 
 Any questions not answered here can be answered by taking a look at the source code of *irc-patch.pl*.  It is heavily commented, and I tried to explain everything the bot does, and, more importantly, *why*.  If the source code doesn't answer your questions, feel free to drop me an email at [dhetrick@gmail.com](mailto:dhetrick@gmail.com).
 
-## Why?
+## Why
 
 To be honest, I created **irc-patch** out of an unusual personal need.  I was trying to find some friends on IRC after not speaking to them for some time, and the server, network, and channel where we normally met had been changed.  I could hang out in random IRC channels, waiting to see who showed up, or I could figure out a way to watch a bunch of different channels on a bunch of different networks at the same time.  I used the first version of **irc-patch** to watch 10 different channels on 12 different networks;  eventually, I found my IRC friends, and shut down the bot.  Fast forward 10 years, and I found this script in one of my backup drives.  One thing led to another, and I decided to make this a *real* IRC bot, with a whole bunch of functionality that I found useful.  I uploaded the script to GitHub, and started fixing and updating the code:  **irc-patch** was born.
 

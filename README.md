@@ -26,7 +26,7 @@ Setting for *irc-patch.pl* are handled by XML files called *patchfiles*; they co
   * `log` - Turns logging on and off.  Default: **off**.
   * `bot_chat` - Sets a symbol to be prepended to all relay chat.  Default: "*** ".
   * `ircname` - Sets the relay's username.  Default:  "irc-patch 0.15.25 IRC bot".
-  * `motd` - Sets the relay's message of the day.  Default: "Welcome to %CHANNEL%, %NICK%!"
+  * `motd` - Sets the relay's message of the day, sent to users when they first join a channel as a private notice.  Default: "Welcome to %CHANNEL%, %NICK%!"
   * `private_messaging` - Turns private messaging on and off.  Default: **on**.
   * `timestamp` - Turns timestamping on and off.  Default: **on**.
   * `information` - Turns informational commands on and off.  Default: **on**.

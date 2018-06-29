@@ -4,6 +4,8 @@
 
 **irc-patch** is an [IRC](https://en.wikipedia.org/wiki/Internet_Relay_Chat) [bot](https://en.wikipedia.org/wiki/IRC_bot) that "patches" two (or more) IRC [channels](https://en.wikipedia.org/wiki/Internet_Relay_Chat#Channels) together.  Features include cross-server private messaging, multiple server and channel support, logging, XML support for patchfiles, user and channel management, and much more.  All chat on each channel, including CTCP "action" messages, will be passed on to all the other servers in the patch.  Basically, you can have the bot connect channels on any server to any other server, and all the chat messages will be passed on.
 
+**irc-patch** will run on any platform that Perl and POE can run on.  Development was performed on both Windows 10 and Debian linux, as was testing.
+
 ## Requirements
 
 __*Perl*__, __*POE*__, and __*POE::Component::IRC.*__
@@ -25,7 +27,7 @@ Setting for *irc-patch.pl* are handled by XML files called *patchfiles*; they co
   
 * _Optional patchfile elements_:
   * `verbose` - Turns verbose mode on and off.  Default: **on**.
-  * `log` - Turns logging on and off.  Default: **off**.
+  * `log` - Turns logging on and off.  Set to a filename to turn logging on; log data will be written to this file.  Default: **off**.
   * `bot_chat` - Sets a symbol to be prepended to all relay chat.  Default: "*** ".
   * `ircname` - Sets the relay's username.  Default:  "irc-patch 0.15.25 IRC bot".
   * `motd` - Sets the relay's message of the day, sent to users when they first join a channel, as a private notice.  Default: "Welcome to %CHANNEL%, %NICK%!"
@@ -48,6 +50,50 @@ Setting for *irc-patch.pl* are handled by XML files called *patchfiles*; they co
     </patch>
 
 This patchfile, although valid, won't really do anything much;  as the bot isn't connected to any other servers, no chat will be broadcast, and private messaging won't function properly.
+
+## Example Usage
+
+Let's create a patchfile that connects a channel named "#patchnet" on [Undernet](http://www.undernet.org), [EFnet](http://www.efnet.org), and [GameSurge](https://gamesurge.net).  Since I'm located in the US, I'm going to pick three servers, one on each network, that are located in the US.  I've selected `Chicago.IL.US.Undernet.org` on the Undernet network, `irc.servercentral.net` on the EFnet network, and `VortexServers.IL.US.GameSurge.net` on the GameSurge network.  I want to use **irc-patch** with minimal functionality, so I'm going to disable the information commands, but leave private messaging turned on.  I also want to use logging, and will log to a file named `/home/dhetrick/ircpatch.txt`.  I'll set the administration password to `sc00byd00`, and the bot's nickname to `patchbot`.  I'm going to open up a file named `patchnet.patch`, and enter the following into it:
+
+    <?xml version="1.0" encoding="UTF-8"?>
+    <patch>
+        <!-- patchnet.patch -->
+        <channel>#patchnet</channel>
+        <server>Chicago.IL.US.Undernet.org:6667</server>
+        <server>irc.servercentral.net:6667</server>
+        <server>VortexServers.IL.US.GameSurge.net:6667</server>
+        <password>sc00byd00</password>
+        <nick>patchbot</nick>
+        <alternate>patchb0t</alternate>
+        <information>off</information>
+        <private_messaging>on</private_messaging>
+        <log>/home/dhetrick/ircpatch.txt</log>
+    </patch>
+
+I save the patchfile to my home directory, `/home/dhetrick`, the same place I've saved `irc-patch.pl`.  I open up a terminal, and start up **irc-patch**:
+
+    dhetrick@desktop:/home/dhetrick$ irc-patch.pl patchnet.patch
+        _                             __       __
+       (_)_________      ____  ____ _/ /______/ /_
+      / / ___/ ___/_____/ __ \/ __ `/ __/ ___/ __ \
+     / / /  / /__/_____/ /_/ / /_/ / /_/ /__/ / / /
+    /_/_/   \___/     / .___/\__,_/\__/\___/_/ /_/
+                     /_/
+    IRC network-channel relay bot
+    irc-patch.pl (v0.15.25 - "bamboo")
+    (c) Copyright Daniel Hetrick 2018
+    .
+    [6:26:22 5/29/2018 0s] Starting up IRC bot...
+    [6:26:25 5/29/2018 2s] Connected to irc.foonet.com
+    [6:26:25 5/29/2018 2s] Joining channel "#patchnet" on "Chicago.IL.US.Undernet.org"
+    [6:26:25 5/29/2018 2s] Joining channel "#patchnet" on "irc.servercentral.net"
+    [6:26:25 5/29/2018 3s] Joining channel "#patchnet" on "VortexServers.IL.US.GameSurge.net"
+
+I fire up my IRC client, and join "#patchnet" on Undernet, and can see my action on **irc-patch**'s log:
+
+    [6:29:29 5/29/2018 186s] wraithnix joined channel #patchnet (Chicago.IL.US.Undernet.org)
+
+Now, my channel relay network is up and running!  If any clients join "#patchnet" on Undernet, EFnet, or GameSurge, they'll be able to chat to each other, see who's online, and send private messages to each other.
 
 ## Message of the Day (MOTD)
 

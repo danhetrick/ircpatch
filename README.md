@@ -39,6 +39,7 @@ Setting for *irc-patch.pl* are handled by XML files called *patchfiles*; they co
 
     <?xml version="1.0" encoding="UTF-8"?>
     <patch>
+        <!-- minimal.patch -->
         <channel>#ircpatch</channel>
         <server>localhost:6667</server>
         <password>changeme</password>

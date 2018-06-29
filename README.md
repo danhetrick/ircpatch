@@ -28,7 +28,7 @@ Setting for *irc-patch.pl* are handled by XML files called *patchfiles*; they co
   * `log` - Turns logging on and off.  Default: **off**.
   * `bot_chat` - Sets a symbol to be prepended to all relay chat.  Default: "*** ".
   * `ircname` - Sets the relay's username.  Default:  "irc-patch 0.15.25 IRC bot".
-  * `motd` - Sets the relay's message of the day, sent to users when they first join a channel as a private notice.  Default: "Welcome to %CHANNEL%, %NICK%!"
+  * `motd` - Sets the relay's message of the day, sent to users when they first join a channel, as a private notice.  Default: "Welcome to %CHANNEL%, %NICK%!"
   * `private_messaging` - Turns private messaging on and off.  Default: **on**.
   * `timestamp` - Turns timestamping on and off.  Default: **on**.
   * `information` - Turns informational commands on and off.  Default: **on**.
@@ -46,9 +46,9 @@ Setting for *irc-patch.pl* are handled by XML files called *patchfiles*; they co
         <alternate>irc-patch01525</alternate>
     </patch>
 
-## MOTD
+## Message of the Day (MOTD)
 
-The message of the day features several symbols that be used to customize the greeting.  The symbols are interpolated right before they are sent, so you can customize your MOTD for every user!  The MOTD is sent to every user who joins a channel the bot is in.  There are six symbols available for use:
+The message of the day features several symbols that be used to customize the greeting.  The symbols are interpolated right before they are sent, so you can customize your MOTD for every user!  The MOTD is sent to every user who joins a channel the bot is in.  There are six (6) symbols available for use:
 
 * `%CHANNEL%` - Replaced with the name of the channel the MOTD recipient has joined.
 * `%NICK%` - Replaced with the joining user's nick.
@@ -61,7 +61,7 @@ The message of the day features several symbols that be used to customize the gr
 
 Once *irc-patch* is up and running, send `.help` as a private message to the bot to see what commands are available for use.  In one of the channels the bot is monitoring, you can also send `.help` as a public message to see what public commands are available for use.  To log into the bot, send `.password <your password>` as a private message.  Once logged in, you can mute individual channels by sending `.mute` as a public message in the channel you want to mute, and `.mute` again to un-mute it.  Each channel is only muted on the server the command is issued in;  if you have three channels linked, for example, sending a `.mute` public message will only mute the channel (on the server) the public message was issued on.  Muted channels will still receive chat text from other channels, their chat text will simply not be relayed to the rest of the network.
 
-To send a private message to someone in any of the connected channels, send a private message to the bot with `.private <nick> <message>`, or `.p <nick> <message>`;  the message will be relayed by the bot to the appropriate user.  If more than one person is using the same nick, the bot will request that you specify what server the desired nick is using, with `.private <nick> <server> <message>`, or `.p <nick> <server> <message>`.
+To send a private message to someone in any of the connected channels, send a private message to the bot with `.private NICK MESSAGE`, or `.p NICK MESSAGE`;  the message will be relayed by the bot to the appropriate user.  If more than one person is using the same nick, the bot will request that you specify what server the desired nick is using, with `.private NICK SERVER MESSAGE`, or `.p NICK SERVER MESSAGE`.
 
 There are six (6) commands available via public message, and eight (8) commands available via private message.  All command output is relayed to the calling user via notice.  Many of the commands can be disabled via patchfile; disabled commands won't be displayed via `.help`.
 

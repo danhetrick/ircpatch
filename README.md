@@ -45,7 +45,7 @@ Settings for **irc-patch** are handled by [XML](https://en.wikipedia.org/wiki/XM
 
 [example.patch](https://github.com/danhetrick/ircpatch/blob/unstable/example.patch "example.patch") is an example of a patchfile:  every "server" element causes the bot to connect to a server, and every "channel" element causes the bot to join a channel.  Each patched channel will only be able to "talk" to their identically named counterparts (so, "#mychannel" on EFnet and "#mychannel" on Undernet, if patched, will only have messages relayed to each other;  if "#otherchannel" is patched on both networks by the same bot, it will only be able to "talk" to "#otherchannel", and "#mychannel" will only be able to "talk" to "#mychannel").  Patchfiles are XML based, and feature a number of elements, some required, and some not:
 
-* ###_Required patchfile elements_:
+* _Required patchfile elements_:
   * `channel` - Sets the channel to relay.  At least one channel element is required.
   * `server` - Sets an IRC server to connect to (in *server:port* format).  At least one server element is required.
   * `password` - Sets the password for administrative functions.

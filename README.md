@@ -84,9 +84,11 @@ I save the patchfile to my home directory, `/home/dhetrick`, the same place I've
     (c) Copyright Daniel Hetrick 2018
     .
     [6:26:22 5/29/2018 0s] Starting up IRC bot...
-    [6:26:25 5/29/2018 2s] Connected to irc.foonet.com
-    [6:26:25 5/29/2018 2s] Joining channel "#patchnet" on "Chicago.IL.US.Undernet.org"
-    [6:26:25 5/29/2018 2s] Joining channel "#patchnet" on "irc.servercentral.net"
+    [6:26:25 5/29/2018 2s] Connected to Chicago.IL.US.Undernet.org
+    [6:26:25 5/29/2018 2s] Connected to irc.servercentral.net
+    [6:26:25 5/29/2018 3s] Connected to VortexServers.IL.US.GameSurge.net
+    [6:26:25 5/29/2018 3s] Joining channel "#patchnet" on "Chicago.IL.US.Undernet.org"
+    [6:26:25 5/29/2018 3s] Joining channel "#patchnet" on "irc.servercentral.net"
     [6:26:25 5/29/2018 3s] Joining channel "#patchnet" on "VortexServers.IL.US.GameSurge.net"
 
 I fire up my IRC client, and join "#patchnet" on Undernet, and can see my action on **irc-patch**'s log:

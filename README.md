@@ -30,7 +30,9 @@ __*Perl*__, __*POE*__, and __*POE::Component::IRC.*__
 
 ## Usage
 
-  perl irc-patch.pl <FILENAME>
+Execute *irc-patch.pl* with no arguments to load the default patchfile, *default.patch*, or with one argument, the filename of the patchfile to load:
+
+    perl irc-patch.pl <FILENAME>
 
 ## Patchfiles
 

@@ -887,15 +887,15 @@ sub load_patchfile {
 	my $tpp = XML::TreePP->new();
 	my $tree = $tpp->parsefile( $filename );
 
-	# ========================
-	# | PATCHFILE TAGS BEGIN |
-	# ========================
+	# ============================
+	# | PATCHFILE ELEMENTS BEGIN |
+	# ============================
 
-	# Verbose tag
+	# Verbose element
 	# Turns verbose mode on or off
 	# Not required
 	if(ref($tree->{patch}->{verbose}) eq 'ARRAY'){
-		error("Only one verbose tag per patchfile.");
+		error("Only one verbose element per patchfile.");
 	}
 	if($tree->{patch}->{verbose}){
 		if( ($tree->{patch}->{verbose} eq "1") || (lc($tree->{patch}->{verbose}) eq "yes") || (lc($tree->{patch}->{verbose}) eq "on") ) {
@@ -903,11 +903,11 @@ sub load_patchfile {
 		}
 	}
 
-	# Private_messaging tag
+	# Private_messaging element
 	# Turns verbose mode on or off
 	# Not required
 	if(ref($tree->{patch}->{private_messaging}) eq 'ARRAY'){
-		error("Only one private_messaging tag per patchfile.");
+		error("Only one private_messaging element per patchfile.");
 	}
 	if($tree->{patch}->{private_messaging}){
 		if( ($tree->{patch}->{private_messaging} eq "1") || (lc($tree->{patch}->{private_messaging}) eq "yes") || (lc($tree->{patch}->{private_messaging}) eq "on") ) {
@@ -917,11 +917,11 @@ sub load_patchfile {
 		}
 	}
 
-	# Information tag
+	# Information element
 	# Turns information commands on or off
 	# Not required
 	if(ref($tree->{patch}->{information}) eq 'ARRAY'){
-		error("Only one information tag per patchfile.");
+		error("Only one information element per patchfile.");
 	}
 	if($tree->{patch}->{information}){
 		if( ($tree->{patch}->{information} eq "1") || (lc($tree->{patch}->{information}) eq "yes") || (lc($tree->{patch}->{information}) eq "on") ) {
@@ -931,11 +931,11 @@ sub load_patchfile {
 		}
 	}
 
-	# Timestamp tag
+	# Timestamp element
 	# Turns timestamps on logging and verbose messages on or off
 	# Not required
 	if(ref($tree->{patch}->{timestamp}) eq 'ARRAY'){
-		error("Only one timestamp tag per patchfile.");
+		error("Only one timestamp element per patchfile.");
 	}
 	if($tree->{patch}->{timestamp}){
 		if( ($tree->{patch}->{timestamp} eq "1") || (lc($tree->{patch}->{timestamp}) eq "yes") || (lc($tree->{patch}->{timestamp}) eq "on") ) {
@@ -945,22 +945,22 @@ sub load_patchfile {
 		}
 	}
 
-	# Log tag
+	# Log element
 	# Turns logging on or off
 	# Not required
 	if(ref($tree->{patch}->{log}) eq 'ARRAY'){
-		error("Only one log tag per patchfile.");
+		error("Only one log element per patchfile.");
 	}
 	if($tree->{patch}->{log}){
 		$LOG = $tree->{patch}->{log};
 	}
 
-	# bot_chat_id tag
+	# bot_chat_id element
 	# Sets a symbol that is prefaced on every bot chat text
 	# Not required
 	# Default:  "*** "
 	if(ref($tree->{patch}->{bot_chat_id}) eq 'ARRAY'){
-		error("Only one bot_chat_id tag per patchfile.");
+		error("Only one bot_chat_id element per patchfile.");
 	}
 	if($tree->{patch}->{bot_chat_id}){
 		$BOT_OUTPUT_SYMBOL = $tree->{patch}->{bot_chat_id};
@@ -969,7 +969,7 @@ sub load_patchfile {
 		}
 	}
 
-	# Channel tag(s)
+	# Channel element(s)
 	# Sets the IRC channel(s) to patch
 	# Required
 	if($tree->{patch}->{channel}){
@@ -981,10 +981,10 @@ sub load_patchfile {
 			push(@xchannels,$tree->{patch}->{channel});
 		}
 	} else {
-		error("Patchfile is missing a channel tag.");
+		error("Patchfile is missing a channel element.");
 	}
 
-	# Server tag(s)
+	# Server element(s)
 	# Sets the IRC servers to patch, in "server:port" format
 	# Required
 	if($tree->{patch}->{server}){
@@ -996,26 +996,26 @@ sub load_patchfile {
 			push(@xservers,$tree->{patch}->{server});
 		}
 	} else {
-		error("Patchfile is missing a server tag.");
+		error("Patchfile is missing a server element.");
 	}
 
-	# Password tag
+	# Password element
 	# Sets the administration password
 	# Required
 	if(ref($tree->{patch}->{password}) eq 'ARRAY'){
-		error("Only one password tag per patchfile.");
+		error("Only one password element per patchfile.");
 	}
 	if($tree->{patch}->{password}){
 		$password = $tree->{patch}->{password};
 	} else {
-		error("Patchfile is missing a password tag");
+		error("Patchfile is missing a password element");
 	}
 
-	# Motd tag
+	# Motd element
 	# Sets the MOTD, either in a file or a string
 	# Not required
 	if(ref($tree->{patch}->{motd}) eq 'ARRAY'){
-		error("Only one MOTD tag per patchfile.");
+		error("Only one MOTD element per patchfile.");
 	}
 	if($tree->{patch}->{motd}){
 		if((-e $tree->{patch}->{motd})&&(-f $tree->{patch}->{motd})){
@@ -1029,43 +1029,43 @@ sub load_patchfile {
 		}
 	}
 
-	# Nick tag
+	# Nick element
 	# Sets the bot's default nick
 	# Required
 	if(ref($tree->{patch}->{nick}) eq 'ARRAY'){
-		error("Only one nick tag per patchfile.");
+		error("Only one nick element per patchfile.");
 	}
 	if($tree->{patch}->{nick}){
 		$xnick = $tree->{patch}->{nick};
 	} else {
-		error('Patchfile is missing a "nick" tag');
+		error("Patchfile is missing a nick element");
 	}
 
-	# Alternate tag
+	# Alternate element
 	# Sets the bot's alternate nick
 	# Required
 	if(ref($tree->{patch}->{alternate}) eq 'ARRAY'){
-		error("Only one alternate tag per patchfile.");
+		error("Only one alternate element per patchfile.");
 	}
 	if($tree->{patch}->{alternate}){
 		$xanick = $tree->{patch}->{alternate};
 	} else {
-		error('Patchfile is missing a "alternate" tag');
+		error('Patchfile is missing a alternate element');
 	}
 
-	# Ircname tag
+	# Ircname element
 	# Set the bot's username
 	# Not required
 	if(ref($tree->{patch}->{ircname}) eq 'ARRAY'){
-		error("Only one ircname tag per patchfile.");
+		error("Only one ircname element per patchfile.");
 	}
 	if($tree->{patch}->{ircname}){
 		$xinfo = $tree->{patch}->{ircname};
 	}
 
-	# ======================
-	# | PATCHFILE TAGS END |
-	# ======================
+	# ==========================
+	# | PATCHFILE ELEMENTS END |
+	# ==========================
 
 	if($xnick ne ''){ $NICKNAME = $xnick;  $CURRENT_NICK= $NICKNAME; }
 	if($xinfo ne ''){ $USERNAME = $xinfo; }

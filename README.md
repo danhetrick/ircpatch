@@ -35,7 +35,7 @@ __*Perl*__, __*POE*__, and __*POE::Component::IRC.*__
 
 ## Terminology
 
-* **bot** - ["An IRC bot is a set of scripts or an independent program that connects to Internet Relay Chat as a client, and so appears to other IRC users as another user. An IRC bot differs from a regular client in that instead of providing interactive access to IRC for a human user, it performs automated functions."](https://en.wikipedia.org/wiki/IRC_bot).  **IRC-Patch** is a bot.
+* **bot** - ["An IRC bot is...an independent program that connects to Internet Relay Chat as a client, and so appears to other IRC users as another user. An IRC bot differs from a regular client in that instead of providing interactive access to IRC for a human user, it performs automated functions."](https://en.wikipedia.org/wiki/IRC_bot).  **IRC-Patch** is a bot.
 * **broadcast** - The action of sending text to all users in the *link* . *"All chat is broadcast to the network."*
 * **channel** - Any number of IRC channels on different servers connected by the bot via the *link*, named after the IRC channel used.  All IRC channels in the *link* must have the same name.  
 * **default.patch** - If **IRC-Patch** is executed with no arguments, the bot will try to load this *patchfile*.

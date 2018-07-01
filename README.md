@@ -18,6 +18,7 @@
       * [Required patchfile elements](#required-patchfile-elements)
       * [Optional patchfile elements](#optional-patchfile-elements)
     * [minimal.patch](#minimal.patch)
+    * [The Link](#the-link)
   * [Message of the Day](#message-of-the-day)
   * [Administration](#administration)
     * [Commands available via public message](#commands-available-via-public-message)
@@ -34,18 +35,18 @@ __*Perl*__, __*POE*__, and __*POE::Component::IRC.*__
 
 ## Terminology
 
-* **broadcast** - The action of sending text to all users in the *network* that would not otherwise receive it (ie, chat messages from other servers/networks).  "All chat is broadcast to the network."
+* **broadcast** - The action of sending text to all users in the *link* . "All chat is broadcast to the network."
 * **channel** - Any number of IRC channels on different servers connected by the bot via the *link*, named after the IRC channel used.  All IRC channels in the *link* must have the same name.
 * **default.patch** - If **IRC-Patch** is executed with no arguments,the bot will try to load this *patchfile*.
 * **link** - The network of IRC servers, using a specific IRC channel name. "I'm going to throw up a bot to *link* #tvtropes."
-* **MOTD** - Message of the day. If a MOTD is set in the patchfile for a link, it will be sent to every user that joins the link as a private notice.
+* **MOTD** - Message of the day. If a *MOTD* is set in the *patchfile* for a *link*, it will be sent to every user that joins the *link* as a [private notice](https://en.wikipedia.org/wiki/List_of_Internet_Relay_Chat_commands#NOTICE).
 * **network** - See *link*.
-* **patchfile** - An XML document containing the settings necessary for IRC-Patch to create one or more *networks*.  "I used tvtropes.patch as my *patchfile*".
-* **private messaging** - User-to-user chat that is send via the *link*, rather than as an [IRC private message](https://www.livinginternet.com/r/ra_priv.htm).
+* **patchfile** - An XML document containing the settings necessary for IRC-Patch to create one or more *links*.  "I used tvtropes.patch as my *patchfile*".
+* **private messaging** - User-to-user chat that is send via the *link*, rather than as an [IRC private message](https://en.wikipedia.org/wiki/List_of_Internet_Relay_Chat_commands#PRIVMSG).
 
 ## Usage
 
-Execute *irc-patch.pl* with no arguments to load the default patchfile, *default.patch*, or with one argument, the filename of the patchfile to load:
+Execute `irc-patch.pl` with no arguments to load the default patchfile, *default.patch*, or with one argument, the filename of the patchfile to load:
 
     perl irc-patch.pl <FILENAME>
 
@@ -53,11 +54,15 @@ Execute *irc-patch.pl* with no arguments to load the default patchfile, *default
 
 Settings for **IRC-Patch** are handled by [XML](https://en.wikipedia.org/wiki/XML) files called *patchfiles*; they contain all the information needed for bot to connect any number of servers and channels together;  each channel patched will be considered a single link.  Multiple links can be created in a single *patchfile*  The root element for a patchfile is **patch**, and all other elements are children of the root.
 
-[irc-patch.pl](https://github.com/danhetrick/ircpatch/blob/unstable/irc-patch.pl "irc-patch.pl") is the main program, a Perl script.  To use, either create a patchfile named *default.patch* in the same directory as the script, and run *irc-patch.pl* with no arguments, or create a patchfile with a different name and run *irc-patch.pl* with the patchfile's filename as the first (and only) argument.
+[irc-patch.pl](https://github.com/danhetrick/ircpatch/blob/unstable/irc-patch.pl "irc-patch.pl") is the main program, a Perl script.  To use, either create a patchfile named *default.patch* in the same directory as the script, and run `irc-patch.pl` with no arguments, or create a patchfile with a different name and run `irc-patch.pl` with the patchfile's filename as the first (and only) argument.
+
+## The Link
+
+The *link* is the network facilitated by **IRC-Patch**.  Each IRC channel "patched" is "linked" to identically named channels on all servers the bot is connected to. Even though **IRC-Patch** can "patch" multiple channels, each channel operates individually from each other;  users on one link can't chat with users on another link.
 
 ### example.patch
 
-[example.patch](https://github.com/danhetrick/ircpatch/blob/unstable/example.patch "example.patch") is an example of a patchfile:  every "server" element causes the bot to connect to a server, and every "channel" element causes the bot to join a channel.  Each patched channel will only be able to "talk" to their identically named counterparts (so, "#mychannel" on EFnet and "#mychannel" on Undernet, if patched, will only have messages relayed to each other;  if "#otherchannel" is patched on both networks by the same bot, it will only be able to "talk" to "#otherchannel", and "#mychannel" will only be able to "talk" to "#mychannel").  Patchfiles are XML based, and feature a number of elements, some required, and some not:
+[example.patch](https://github.com/danhetrick/ircpatch/blob/unstable/example.patch "example.patch") is an example of a patchfile:  every "server" element causes the bot to connect to a server, and every "channel" element causes the bot to join a channel. Patchfiles are XML based, and feature a number of elements, some required, and some not:
 
 ### Required patchfile elements
   * `channel` - Sets the channel to relay.  At least one channel element is required.
@@ -191,7 +196,7 @@ Now, my channel relay network is up and running!  If any clients join "#patchnet
 
 ## Contact
 
-Any questions not answered here can be answered by taking a look at the source code of *irc-patch.pl*.  It is heavily commented, and I tried to explain everything the bot does, and, more importantly, *why*.  If the source code doesn't answer your questions, feel free to drop me an email at [dhetrick@gmail.com](mailto:dhetrick@gmail.com).
+Any questions not answered here can be answered by taking a look at the source code of `irc-patch.pl`.  It is heavily commented, and I tried to explain everything the bot does, and, more importantly, *why*.  If the source code doesn't answer your questions, feel free to drop me an email at [dhetrick@gmail.com](mailto:dhetrick@gmail.com).
 
 ## Why
 

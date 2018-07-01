@@ -1,16 +1,17 @@
 ![IRC Patch](https://github.com/danhetrick/ircpatch/blob/docs/ircpatch_logo.png?raw=true)
 
-# irc-patch 0.15.25
+# IRC-Patch 0.15.25
 
 ## Summary
 
-**irc-patch** is an [IRC](https://en.wikipedia.org/wiki/Internet_Relay_Chat) [bot](https://en.wikipedia.org/wiki/IRC_bot) that "patches" two (or more) IRC [channels](https://en.wikipedia.org/wiki/Internet_Relay_Chat#Channels) together.  Features include cross-server private messaging, multiple server and channel support, logging, XML support for patchfiles, user and channel management, and much more.  All chat on each channel, including [CTCP](https://tools.ietf.org/id/draft-oakley-irc-ctcp-01.html) "action" messages, will be passed on to all the other servers in the patch.  Basically, you can have the bot connect channels on any server to any other server, and all the chat messages will be passed on.
+**IRC-Patch** is an [IRC](https://en.wikipedia.org/wiki/Internet_Relay_Chat) [bot](https://en.wikipedia.org/wiki/IRC_bot) that "patches" two (or more) IRC [channels](https://en.wikipedia.org/wiki/Internet_Relay_Chat#Channels) together.  Features include cross-server private messaging, multiple server and channel support, logging, XML support for patchfiles, user and channel management, and much more.  All chat on each channel, including [CTCP](https://tools.ietf.org/id/draft-oakley-irc-ctcp-01.html) "action" messages, will be passed on to all the other servers in the patch.  Basically, you can have the bot connect channels on any server to any other server, and all the chat messages will be passed on.
 
-**irc-patch** will run on any platform that Perl and POE can run on.  Development was performed on both Windows 10 and Debian linux, as was testing.
+**IRC-Patch** will run on any platform that Perl and POE can run on.  Development was performed on both Windows 10 and Debian linux, as was testing.
 
 ## Table of Contents
 
   * [Requirements](#requirements)
+  * [Terminology](#terminology)
   * [Usage](#usage)
   * [Patchfiles](#patchfiles)
     * [example.patch](#example.patch)
@@ -31,6 +32,14 @@
 
 __*Perl*__, __*POE*__, and __*POE::Component::IRC.*__
 
+## Terminology
+
+* **broadcast** - The action of sending text to all users in the *network* that would not otherwise receive it (ie, chat messages from other servers/networks).  "All chat is broadcast to the network."
+* **channel** - Any number of IRC channels on different servers connected by the bot via the *link*, named after the IRC channel used.  All IRC channels in the *link* must have the same name.
+* **link** - The network of IRC servers, using a specific IRC channel name. "I'm going to throw up a bot to *link* #tvtropes."
+* **network** - See *link*.
+* **patchfile** - An XML document containing the settings necessary for IRC-Patch to create one or more networks.  "I used tvtropes.patch as my *patchfile*".
+
 ## Usage
 
 Execute *irc-patch.pl* with no arguments to load the default patchfile, *default.patch*, or with one argument, the filename of the patchfile to load:
@@ -39,7 +48,7 @@ Execute *irc-patch.pl* with no arguments to load the default patchfile, *default
 
 ## Patchfiles
 
-Settings for **irc-patch** are handled by [XML](https://en.wikipedia.org/wiki/XML) files called *patchfiles*; they contain all the information needed for bot to connect any number of servers and channels together into a single network.  The root element for a patchfile is **patch**, and all other elements are children of the root.
+Settings for **IRC-Patch** are handled by [XML](https://en.wikipedia.org/wiki/XML) files called *patchfiles*; they contain all the information needed for bot to connect any number of servers and channels together into a single network.  The root element for a patchfile is **patch**, and all other elements are children of the root.
 
 [irc-patch.pl](https://github.com/danhetrick/ircpatch/blob/unstable/irc-patch.pl "irc-patch.pl") is the main program, a Perl script.  To use, either create a patchfile named *default.patch* in the same directory as the script, and run *irc-patch.pl* with no arguments, or create a patchfile with a different name and run *irc-patch.pl* with the patchfile's filename as the first (and only) argument.
 
@@ -68,7 +77,7 @@ Settings for **irc-patch** are handled by [XML](https://en.wikipedia.org/wiki/XM
 
 ### minimal.patch
 
-[minimal.patch](https://github.com/danhetrick/ircpatch/blob/unstable/minimal.patch "minimal.patch") is an example of a patchfile with the minimum number of elements for it to be a valid patchfile.  Many of the other bot settings are left to their default values, with only the elements necessary for a network connection and chat relay.  It will connect to a single server hosted on the same computer hosting *irc-patch*, and connect to a single channel, "#ircpatch":
+[minimal.patch](https://github.com/danhetrick/ircpatch/blob/unstable/minimal.patch "minimal.patch") is an example of a patchfile with the minimum number of elements for it to be a valid patchfile.  Many of the other bot settings are left to their default values, with only the elements necessary for a network connection and chat relay.  It will connect to a single server hosted on the same computer hosting *IRC-Patch*, and connect to a single channel, "#ircpatch":
 
     <?xml version="1.0" encoding="UTF-8"?>
     <patch>
@@ -95,7 +104,7 @@ The message of the day features several symbols that be used to customize the gr
 
 ## Administration
 
-Once *irc-patch* is up and running, send `.help` as a private message to the bot to see what commands are available for use.  In one of the channels the bot is monitoring, you can also send `.help` as a public message to see what public commands are available for use.  To log into the bot, send `.password <your password>` as a private message.  Once logged in, you can mute individual channels by sending `.mute` as a public message in the channel you want to mute, and `.mute` again to un-mute it.  Each channel is only muted on the server the command is issued in;  if you have three channels linked, for example, sending a `.mute` public message will only mute the channel (on the server) the public message was issued on.  Muted channels will still receive chat text from other channels, their chat text will simply not be relayed to the rest of the network.
+Once *IRC-Patch* is up and running, send `.help` as a private message to the bot to see what commands are available for use.  In one of the channels the bot is monitoring, you can also send `.help` as a public message to see what public commands are available for use.  To log into the bot, send `.password <your password>` as a private message.  Once logged in, you can mute individual channels by sending `.mute` as a public message in the channel you want to mute, and `.mute` again to un-mute it.  Each channel is only muted on the server the command is issued in;  if you have three channels linked, for example, sending a `.mute` public message will only mute the channel (on the server) the public message was issued on.  Muted channels will still receive chat text from other channels, their chat text will simply not be relayed to the rest of the network.
 
 To send a private message to someone in any of the connected channels, send a private message to the bot with `.private NICK MESSAGE`, or `.p NICK MESSAGE`;  the message will be relayed by the bot to the appropriate user.  If more than one person is using the same nick, the bot will request that you specify what server the desired nick is using, with `.private NICK SERVER MESSAGE`, or `.p NICK SERVER MESSAGE`.
 
@@ -128,7 +137,7 @@ If a user tries to log into the bot, and provides the wrong password, they'll be
 
 ## Example Usage
 
-Let's create a patchfile that connects a channel named "#patchnet" on [Undernet](http://www.undernet.org), [EFnet](http://www.efnet.org), and [GameSurge](https://gamesurge.net), three different, separate IRC networks.  Since I'm located in the US, I'm going to pick three servers located in the US (more specifically, in Chicago, IL), one on each network.  I've selected `Chicago.IL.US.Undernet.org` on the Undernet network, `irc.servercentral.net` on the EFnet network, and `VortexServers.IL.US.GameSurge.net` on the GameSurge network;  I'll use the default port `6667` on each server.  I want to use **irc-patch** with minimal functionality, so I'm going to disable the information commands, but leave private messaging turned on.  I also want to use logging, and will log to a file named `/home/dhetrick/ircpatch.txt`.  I'll set a short MOTD that welcomes new users to the channel:  "Welcome to %CHANNEL%, %NICK%!".  I'll set the administration password to `sc00byd00`, and the bot's nickname to `patchbot`.  I'm going to open up a file named `patchnet.patch`, and enter the following into it:
+Let's create a patchfile that connects a channel named "#patchnet" on [Undernet](http://www.undernet.org), [EFnet](http://www.efnet.org), and [GameSurge](https://gamesurge.net), three different, separate IRC networks.  Since I'm located in the US, I'm going to pick three servers located in the US (more specifically, in Chicago, IL), one on each network.  I've selected `Chicago.IL.US.Undernet.org` on the Undernet network, `irc.servercentral.net` on the EFnet network, and `VortexServers.IL.US.GameSurge.net` on the GameSurge network;  I'll use the default port `6667` on each server.  I want to use **IRC-Patch** with minimal functionality, so I'm going to disable the information commands, but leave private messaging turned on.  I also want to use logging, and will log to a file named `/home/dhetrick/ircpatch.txt`.  I'll set a short MOTD that welcomes new users to the channel:  "Welcome to %CHANNEL%, %NICK%!".  I'll set the administration password to `sc00byd00`, and the bot's nickname to `patchbot`.  I'm going to open up a file named `patchnet.patch`, and enter the following into it:
 
     <?xml version="1.0" encoding="UTF-8"?>
     <patch>
@@ -146,7 +155,7 @@ Let's create a patchfile that connects a channel named "#patchnet" on [Undernet]
         <motd>Welcome to %CHANNEL%, %NICK%!</motd>
     </patch>
 
-I save the patchfile to my home directory, `/home/dhetrick`, the same place I've saved `irc-patch.pl`.  I open up a terminal, and start up **irc-patch**:
+I save the patchfile to my home directory, `/home/dhetrick`, the same place I've saved `irc-patch.pl`.  I open up a terminal, and start up **IRC-Patch**:
 
     dhetrick@desktop:/home/dhetrick$ perl irc-patch.pl patchnet.patch
         _                             __       __
@@ -167,7 +176,7 @@ I save the patchfile to my home directory, `/home/dhetrick`, the same place I've
     [6:26:26 5/29/2018 3s] Joining channel "#patchnet" on "irc.servercentral.net"
     [6:26:26 5/29/2018 3s] Joining channel "#patchnet" on "VortexServers.IL.US.GameSurge.net"
 
-I fire up my IRC client, and join "#patchnet" on Undernet, and can see my action on **irc-patch**'s log:
+I fire up my IRC client, and join "#patchnet" on Undernet, and can see my action on **IRC-Patch**'s log:
 
     [6:29:29 5/29/2018 186s] wraithnix joined channel #patchnet (Chicago.IL.US.Undernet.org)
 
@@ -183,10 +192,10 @@ Any questions not answered here can be answered by taking a look at the source c
 
 ## Why
 
-To be honest, I created **irc-patch** out of an unusual personal need.  I was trying to find some friends on IRC after not speaking to them for some time, and the server, network, and channel where we normally met had been changed.  I could hang out in random IRC channels, waiting to see who showed up, or I could figure out a way to watch a bunch of different channels on a bunch of different networks at the same time.  I used the first version of **irc-patch** to watch 10 different channels on 12 different networks;  eventually, I found my IRC friends, and shut down the bot.  Fast forward 10 years, and I found this script in one of my backup drives.  One thing led to another, and I decided to make this a *real* IRC bot, with a whole bunch of functionality that I found useful.  I uploaded the script to GitHub, and started fixing and updating the code:  **irc-patch** was born.
+To be honest, I created **IRC-Patch** out of an unusual personal need.  I was trying to find some friends on IRC after not speaking to them for some time, and the server, network, and channel where we normally met had been changed.  I could hang out in random IRC channels, waiting to see who showed up, or I could figure out a way to watch a bunch of different channels on a bunch of different networks at the same time.  I used the first version of **IRC-Patch** to watch 10 different channels on 12 different networks;  eventually, I found my IRC friends, and shut down the bot.  Fast forward 10 years, and I found this script in one of my backup drives.  One thing led to another, and I decided to make this a *real* IRC bot, with a whole bunch of functionality that I found useful.  I uploaded the script to GitHub, and started fixing and updating the code:  **IRC-Patch** was born.
 
 ## License
 
-**irc-patch** is free software; you can redistribute it and/or modify it under the same terms as Perl itself.
+**IRC-Patch** is free software; you can redistribute it and/or modify it under the same terms as Perl itself.
 
 Also includes XML::TreePP by Yusuke Kawasaki, built into the program rather than as a separate library.  It's licensed via the same license this program, and Perl, uses.

@@ -36,6 +36,7 @@ __*Perl*__, __*POE*__, and __*POE::Component::IRC.*__
 
 * **broadcast** - The action of sending text to all users in the *network* that would not otherwise receive it (ie, chat messages from other servers/networks).  "All chat is broadcast to the network."
 * **channel** - Any number of IRC channels on different servers connected by the bot via the *link*, named after the IRC channel used.  All IRC channels in the *link* must have the same name.
+* **default.patch** - If **IRC-Patch** is executed with no arguments,the bot will try to load this *patchfile*.
 * **link** - The network of IRC servers, using a specific IRC channel name. "I'm going to throw up a bot to *link* #tvtropes."
 * **MOTD** - Message of the day. If a MOTD is set in the patchfile for a link, it will be sent to every user that joins the link as a private notice.
 * **network** - See *link*.

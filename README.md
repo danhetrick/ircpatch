@@ -37,8 +37,10 @@ __*Perl*__, __*POE*__, and __*POE::Component::IRC.*__
 * **broadcast** - The action of sending text to all users in the *network* that would not otherwise receive it (ie, chat messages from other servers/networks).  "All chat is broadcast to the network."
 * **channel** - Any number of IRC channels on different servers connected by the bot via the *link*, named after the IRC channel used.  All IRC channels in the *link* must have the same name.
 * **link** - The network of IRC servers, using a specific IRC channel name. "I'm going to throw up a bot to *link* #tvtropes."
+* **MOTD** - Message of the day. If a MOTD is set in the patchfile for a link, it will be sent to every user that joins the link as a private notice.
 * **network** - See *link*.
-* **patchfile** - An XML document containing the settings necessary for IRC-Patch to create one or more networks.  "I used tvtropes.patch as my *patchfile*".
+* **patchfile** - An XML document containing the settings necessary for IRC-Patch to create one or more *networks*.  "I used tvtropes.patch as my *patchfile*".
+* **private messaging** - User-to-user chat that is send via the *link*, rather than as an [IRC private message](https://www.livinginternet.com/r/ra_priv.htm).
 
 ## Usage
 
@@ -48,7 +50,7 @@ Execute *irc-patch.pl* with no arguments to load the default patchfile, *default
 
 ## Patchfiles
 
-Settings for **IRC-Patch** are handled by [XML](https://en.wikipedia.org/wiki/XML) files called *patchfiles*; they contain all the information needed for bot to connect any number of servers and channels together into a single network.  The root element for a patchfile is **patch**, and all other elements are children of the root.
+Settings for **IRC-Patch** are handled by [XML](https://en.wikipedia.org/wiki/XML) files called *patchfiles*; they contain all the information needed for bot to connect any number of servers and channels together;  each channel patched will be considered a single link.  Multiple links can be created in a single *patchfile*  The root element for a patchfile is **patch**, and all other elements are children of the root.
 
 [irc-patch.pl](https://github.com/danhetrick/ircpatch/blob/unstable/irc-patch.pl "irc-patch.pl") is the main program, a Perl script.  To use, either create a patchfile named *default.patch* in the same directory as the script, and run *irc-patch.pl* with no arguments, or create a patchfile with a different name and run *irc-patch.pl* with the patchfile's filename as the first (and only) argument.
 

@@ -42,7 +42,7 @@ __*Perl*__, __*POE*__, and __*POE::Component::IRC.*__
 * **link** - The network of IRC servers, using a specific IRC channel name. *"I'm going to throw up a bot to *link* #tvtropes."*
 * **MOTD** - Message of the day. If a *MOTD* is set in the *patchfile* for a *link*, it will be sent to every user that joins the *link* as a [private notice](https://en.wikipedia.org/wiki/List_of_Internet_Relay_Chat_commands#NOTICE).
 * **network** - See *link*.
-* **patchfile** - An XML document containing the settings necessary for IRC-Patch to create one or more *links*.  *"I used tvtropes.patch as my *patchfile*".*
+* **patchfile** - An XML document containing the settings necessary for **IRC-Patch** to create one or more *links*.  *"I used tvtropes.patch as my *patchfile*".*
 * **private messaging** - User-to-user chat that is send via the *link*, rather than as an [IRC private message](https://en.wikipedia.org/wiki/List_of_Internet_Relay_Chat_commands#PRIVMSG).
 
 ## Usage

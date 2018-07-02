@@ -65,7 +65,7 @@ A link consists of at least two IRC servers, on different networks, connecting a
 
 ### example.patch
 
-[example.patch](https://github.com/danhetrick/ircpatch/blob/unstable/example.patch "example.patch") is an example of a patchfile:  every "server" element causes the bot to connect to a server, and every "channel" element causes the bot to join a channel. Patchfiles are XML based, and feature a number of elements, some required, and some not:
+[example.patch](https://github.com/danhetrick/ircpatch/blob/unstable/example.patch "example.patch") is an example of a patchfile:  every "server" element causes the bot to connect to a server, and every "channel" element causes the bot to join a channel (creating a link). Patchfiles are XML based, and feature a number of elements, some required, and some not:
 
 ### Required patchfile elements
   * `channel` - Sets the channel to relay.  At least one channel element is required.

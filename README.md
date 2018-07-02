@@ -39,8 +39,8 @@ __*Perl*__, __*POE*__, and __*POE::Component::IRC.*__
 * **broadcast** - The action of sending text to all users in the *link* . *"All chat is broadcast to the network."*
 * **channel** - Any number of IRC channels on different servers connected by the bot via the *link*, named after the IRC channel used.  All IRC channels in the *link* must have the same name.  
 * **default.patch** - If **IRC-Patch** is executed with no arguments, the bot will try to load this *patchfile*.
-* **link** - The network of IRC servers, using a specific IRC channel name. *"I'm going to throw up a bot to *link* #tvtropes."*
-* **MOTD** - Message of the day. If a *MOTD* is set in the *patchfile* for a *link*, it will be sent to every user that joins the *link* as a [private notice](https://en.wikipedia.org/wiki/List_of_Internet_Relay_Chat_commands#NOTICE).
+* **link** - The network of IRC servers, using a specific IRC channel name, connected by an **IRC-Patch** bot. *"I'm going to throw up a bot to *link* #tvtropes."*
+* **MOTD** - **M**essage **o**f **t**he **d**ay. If a *MOTD* is set in the *patchfile* for a *link*, it will be sent to every user that joins the *link* as a [private notice](https://en.wikipedia.org/wiki/List_of_Internet_Relay_Chat_commands#NOTICE).
 * **network** - See *link*.
 * **patchfile** - An XML document containing the settings necessary for **IRC-Patch** to create one or more *links*.  *"I used tvtropes.patch as my *patchfile*".*
 * **private messaging** - User-to-user chat that is send via the *link*, rather than as an [IRC private message](https://en.wikipedia.org/wiki/List_of_Internet_Relay_Chat_commands#PRIVMSG).
@@ -59,7 +59,9 @@ Settings for **IRC-Patch** are handled by [XML](https://en.wikipedia.org/wiki/XM
 
 ## The Link
 
-The *link* is the network facilitated by **IRC-Patch**.  Each IRC channel "patched" is "linked" to identically named channels on all servers the bot is connected to. Even though **IRC-Patch** can "patch" multiple channels, each channel operates individually from each other;  users on one link can't chat with users on another link.
+The *link* is the network facilitated by **IRC-Patch**.  Each IRC channel "patched" is "linked" to identically named channels on all servers the bot is connected to. Even though **IRC-Patch** can "patch" multiple channels into multiple links, each channel operates individually from each other;  users on one link can't chat with users on another link.  A link is referred to by the name of the channel that it connects to multiple servers.
+
+A link consists of at least two IRC servers, on different networks, connecting a single IRC channel on all connected IRC servers.
 
 ### example.patch
 
@@ -113,11 +115,11 @@ The message of the day features several symbols that be used to customize the gr
 
 ## Administration
 
-Once *IRC-Patch* is up and running, send `.help` as a private message to the bot to see what commands are available for use.  In one of the channels the bot is monitoring, you can also send `.help` as a public message to see what public commands are available for use.  To log into the bot, send `.password <your password>` as a private message.  Once logged in, you can mute individual channels by sending `.mute` as a public message in the channel you want to mute, and `.mute` again to un-mute it.  Each channel is only muted on the server the command is issued in;  if you have three channels linked, for example, sending a `.mute` public message will only mute the channel (on the server) the public message was issued on.  Muted channels will still receive chat text from other channels, their chat text will simply not be relayed to the rest of the network.
+Once *IRC-Patch* is up and running, send `.help` as a private message to the bot to see what commands are available for use.  In one of the channels the bot is monitoring, you can also send `.help` as a public message to see what public commands are available for use.  To log into the bot, send `.password <your password>` as a private message.  Once logged in, you can mute individual channels by sending `.mute` as a public message in the channel you want to mute, and `.mute` again to un-mute it.  Each channel is only muted on the server the command is issued in;  if you have three servers linked, for example, sending a `.mute` public message will only mute the channel (on the server) the public message was issued on.  Muted channels will still receive chat text from other channels, their chat text will simply not be broadcasted.
 
-To send a private message to someone in any of the connected channels, send a private message to the bot with `.private NICK MESSAGE`, or `.p NICK MESSAGE`;  the message will be relayed by the bot to the appropriate user.  If more than one person is using the same nick, the bot will request that you specify what server the desired nick is using, with `.private NICK SERVER MESSAGE`, or `.p NICK SERVER MESSAGE`.
+To send a private message to a user via the link, send a private message to the bot with `.private NICK MESSAGE`, or `.p NICK MESSAGE`;  the message will be relayed by the bot to the appropriate user.  If more than one user on the link is using the same nick, the bot will request that you specify what server the desired user is using, with `.private NICK SERVER MESSAGE`, or `.p NICK SERVER MESSAGE`.
 
-There are six (6) commands available via public message, and eight (8) commands available via private message.  All command output is relayed to the calling user via notice.  Many of the commands can be disabled via patchfile; disabled commands won't be displayed via `.help`.
+There are six (6) possible commands available via public message, and eight (8) possible commands available via private message.  All command output is relayed to the calling user via notice.  Many of the commands can be disabled via patchfile; disabled commands won't be displayed via `.help`.
 
 ### Commands available via public message
 
@@ -142,11 +144,11 @@ There are six (6) commands available via public message, and eight (8) commands 
 
 ## Blacklist
 
-If a user tries to log into the bot, and provides the wrong password, they'll be put on the *blacklist*.  Blacklisted users can't try to log in for a short time period, selected at random from between 60-120 seconds.  Once the user's "timeout" expires, they can log in like normal.  The blacklist *only* effects users that have provided a wrong password; other users can log in like normal.  Users on the blacklist can also issue other commands, they just can't log in.
+If a user tries to log into the bot, and provides the wrong password, they'll be put on the *blacklist*.  Blacklisted users can't try to log in for a short time period, selected at random from between 60-120 seconds.  Once the user's "timeout" expires, they can log in like normal.  The blacklist *only* effects users that have provided a wrong password; other users can log in like normal.  Users on the blacklist can also issue other commands, they just can't log in.  Blacklisted user's chat is still broadcasted.
 
 ## Example Usage
 
-Let's create a patchfile that connects a channel named "#patchnet" on [Undernet](http://www.undernet.org), [EFnet](http://www.efnet.org), and [GameSurge](https://gamesurge.net), three different, separate IRC networks.  Since I'm located in the US, I'm going to pick three servers located in the US (more specifically, in Chicago, IL), one on each network.  I've selected `Chicago.IL.US.Undernet.org` on the Undernet network, `irc.servercentral.net` on the EFnet network, and `VortexServers.IL.US.GameSurge.net` on the GameSurge network;  I'll use the default port `6667` on each server.  I want to use **IRC-Patch** with minimal functionality, so I'm going to disable the information commands, but leave private messaging turned on.  I also want to use logging, and will log to a file named `/home/dhetrick/ircpatch.txt`.  I'll set a short MOTD that welcomes new users to the channel:  "Welcome to %CHANNEL%, %NICK%!".  I'll set the administration password to `sc00byd00`, and the bot's nickname to `patchbot`.  I'm going to open up a file named `patchnet.patch`, and enter the following into it:
+Let's create a patchfile that creates a link named "#patchnet", connecting [Undernet](http://www.undernet.org), [EFnet](http://www.efnet.org), and [GameSurge](https://gamesurge.net), three different, separate IRC networks.  Since I'm located in the US, I'm going to pick three servers located in the US (more specifically, in Chicago, IL), one on each network.  I've selected `Chicago.IL.US.Undernet.org` on the Undernet network, `irc.servercentral.net` on the EFnet network, and `VortexServers.IL.US.GameSurge.net` on the GameSurge network;  I'll use the default port `6667` on each server.  I want to use **IRC-Patch** with minimal functionality, so I'm going to disable the information commands, but leave private messaging turned on.  I also want to use logging, and will log to a file named `/home/dhetrick/ircpatch.txt`.  I'll set a short MOTD that welcomes new users to the channel:  "Welcome to %CHANNEL%, %NICK%!".  I'll set the administration password to `sc00byd00`, and the bot's nickname to `patchbot`.  I'm going to open up a file named `patchnet.patch`, and enter the following into it:
 
     <?xml version="1.0" encoding="UTF-8"?>
     <patch>
@@ -193,7 +195,7 @@ As soon as I enter the channel, the bot sends me a welcome message:
 
     <patchbot> Welcome to #patchnet, wraithnix!
 
-Now, my channel relay network is up and running!  If any clients join "#patchnet" on Undernet, EFnet, or GameSurge, they'll be able to chat to each other, and send private messages to each other.  Everything displayed on the console will be written to `/home/dhetrick/ircpatch.txt` (with the exception of the ASCII art and version information in the startup banner).
+Now, my link is up and running!  If any clients join "#patchnet" on Undernet, EFnet, or GameSurge, they'll be able to chat to each other, and send private messages to each other, via the link.  Everything displayed on the console will be written to `/home/dhetrick/ircpatch.txt` (with the exception of the ASCII art and version information in the startup banner).
 
 ## Contact
 

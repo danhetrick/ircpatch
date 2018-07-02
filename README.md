@@ -18,7 +18,7 @@
       * [Required patchfile elements](#required-patchfile-elements)
       * [Optional patchfile elements](#optional-patchfile-elements)
     * [minimal.patch](#minimal.patch)
-    * [The Link](#the-link)
+  * [The Link](#the-link)
   * [Message of the Day](#message-of-the-day)
   * [Administration](#administration)
     * [Commands available via public message](#commands-available-via-public-message)

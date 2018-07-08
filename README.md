@@ -39,11 +39,11 @@ __*Perl*__, __*POE*__, and __*POE::Component::IRC.*__
 * **broadcast** - The action of sending text to all users in the *link* . *"All chat is broadcast to the network."*
 * **channel** - Any number of IRC channels on different servers connected by the bot via the *link*, named after the IRC channel used.  All IRC channels in the *link* must have the same name.  
 * **default.patch** - If **IRC-Patch** is executed with no arguments, the bot will try to load this *patchfile*.
-* **link** - The network of IRC servers, using a specific IRC channel name, connected by an **IRC-Patch** bot. *"I'm going to throw up a bot to *link* #tvtropes."*
+* **link** - The network of IRC servers, using a specific IRC channel name, connected by an **IRC-Patch** bot. *"I'm going to throw up a bot to *link* #robotech."*
 * **MOTD** - **M**essage **o**f **t**he **d**ay. If a *MOTD* is set in the *patchfile* for a *link*, it will be sent to every user that joins the *link* as a [private notice](https://en.wikipedia.org/wiki/List_of_Internet_Relay_Chat_commands#NOTICE).
 * **network** - See *link*.
-* **patchfile** - An XML document containing the settings necessary for **IRC-Patch** to create one or more *links*.  *"I used tvtropes.patch as my *patchfile*".*
-* **private messaging** - User-to-user chat that is send via the *link*, rather than as an [IRC private message](https://en.wikipedia.org/wiki/List_of_Internet_Relay_Chat_commands#PRIVMSG).
+* **patchfile** - An XML document containing the settings necessary for **IRC-Patch** to create one or more *links*.  *"I used robotech.patch as my *patchfile*".*
+* **private messaging** - User-to-user chat that is send via the *link*, rather than as an [IRC private message](https://en.wikipedia.org/wiki/List_of_Internet_Relay_Chat_commands#PRIVMSG).  This allows for cross-server private messaging.
 
 ## Usage
 

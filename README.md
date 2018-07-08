@@ -13,12 +13,12 @@
   * [Requirements](#requirements)
   * [Terminology](#terminology)
   * [Usage](#usage)
+  * [The Link](#the-link)
   * [Patchfiles](#patchfiles)
     * [example.patch](#example.patch)
       * [Required patchfile elements](#required-patchfile-elements)
       * [Optional patchfile elements](#optional-patchfile-elements)
     * [minimal.patch](#minimal.patch)
-  * [The Link](#the-link)
   * [Message of the Day](#message-of-the-day)
   * [Administration](#administration)
     * [Commands available via public message](#commands-available-via-public-message)
@@ -51,17 +51,17 @@ Execute `irc-patch.pl` with no arguments to load the default patchfile, *default
 
     perl irc-patch.pl <FILENAME>
 
-## Patchfiles
-
-Settings for **IRC-Patch** are handled by [XML](https://en.wikipedia.org/wiki/XML) files called *patchfiles*; they contain all the information needed for bot to connect any number of servers and channels together;  each channel patched will be considered a single link.  Multiple links can be created in a single *patchfile*  The root element for a patchfile is **patch**, and all other elements are children of the root.
-
-[irc-patch.pl](https://github.com/danhetrick/ircpatch/blob/unstable/irc-patch.pl "irc-patch.pl") is the main program, a Perl script.  To use, either create a patchfile named *default.patch* in the same directory as the script, and run `irc-patch.pl` with no arguments, or create a patchfile with a different name and run `irc-patch.pl` with the patchfile's filename as the first (and only) argument.
-
 ## The Link
 
 The *link* is the network facilitated by **IRC-Patch**.  Each IRC channel "patched" is "linked" to identically named channels on all servers the bot is connected to. Even though **IRC-Patch** can "patch" multiple channels into multiple links, each channel operates individually from each other;  users on one link can't chat with users on another link.  A link is referred to by the name of the channel that it connects to multiple servers.
 
 A link consists of at least two IRC servers, on different networks, connecting a single IRC channel on all connected IRC servers.
+
+## Patchfiles
+
+Settings for **IRC-Patch** are handled by [XML](https://en.wikipedia.org/wiki/XML) files called *patchfiles*; they contain all the information needed for bot to connect any number of servers and channels together;  each channel patched will be considered a single link.  Multiple links can be created in a single *patchfile*  The root element for a patchfile is **patch**, and all other elements are children of the root.
+
+[irc-patch.pl](https://github.com/danhetrick/ircpatch/blob/unstable/irc-patch.pl "irc-patch.pl") is the main program, a Perl script.  To use, either create a patchfile named *default.patch* in the same directory as the script, and run `irc-patch.pl` with no arguments, or create a patchfile with a different name and run `irc-patch.pl` with the patchfile's filename as the first (and only) argument.
 
 ### example.patch
 

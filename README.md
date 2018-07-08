@@ -59,22 +59,20 @@ A link consists of at least two IRC servers, on different networks, connecting a
 
 ## Patchfiles
 
-Settings for **IRC-Patch** are handled by [XML](https://en.wikipedia.org/wiki/XML) files called *patchfiles*; they contain all the information needed for bot to connect any number of servers and channels together;  each channel patched will be considered a single link.  Multiple links can be created in a single *patchfile*  The root element for a patchfile is **patch**, and all other elements are children of the root.
-
-[irc-patch.pl](https://github.com/danhetrick/ircpatch/blob/unstable/irc-patch.pl "irc-patch.pl") is the main program, a Perl script.  To use, either create a patchfile named *default.patch* in the same directory as the script, and run `irc-patch.pl` with no arguments, or create a patchfile with a different name and run `irc-patch.pl` with the patchfile's filename as the first (and only) argument.
+Settings for **IRC-Patch** are handled by [XML](https://en.wikipedia.org/wiki/XML) files called *patchfiles*; they contain all the information needed for bot to connect any number of servers and channels together;  each channel patched will be considered a single link.  Multiple links can be created in a single *patchfile*.  The root element for a patchfile is **patch**, and all other elements are children of the root.
 
 ### example.patch
 
-[example.patch](https://github.com/danhetrick/ircpatch/blob/unstable/example.patch "example.patch") is an example of a patchfile:  every "server" element causes the bot to connect to a server, and every "channel" element causes the bot to join a channel (creating a link). Patchfiles are XML based, and feature a number of elements, some required, and some not:
+[example.patch](https://github.com/danhetrick/ircpatch/blob/master/example.patch "example.patch") is an example of a patchfile:  every "server" element causes the bot to connect to a server, and every "channel" element causes the bot to join a channel (creating a link). Patchfiles are XML based, and feature a number of elements, some required, and some not:
 
-### Required patchfile elements
+### Required patchfile elements (marked as **LINK SETTINGS** in *example.patch*)
   * `channel` - Sets the channel to relay.  At least one channel element is required.
   * `server` - Sets an IRC server to connect to (in *server:port* format).  At least one server element is required.
   * `password` - Sets the password for administrative functions.
   * `nick` - Sets the relay's IRC nickname.
   * `alternate` - Sets the relay's alternate IRC nick if the first is already taken.
   
-### Optional patchfile elements
+### Optional patchfile elements (marked as **OPTIONAL SETTINGS** in *example.patch*)
   * `verbose` - Turns verbose mode on and off.  Default: **on**.
   * `log` - Turns logging on and off.  Set to a filename to turn logging on; log data will be written to this file.  Default: **off**.
   * `bot_chat` - Sets a symbol to be prepended to all relay chat.  Default: "*** ".
@@ -88,7 +86,7 @@ Settings for **IRC-Patch** are handled by [XML](https://en.wikipedia.org/wiki/XM
 
 ### minimal.patch
 
-[minimal.patch](https://github.com/danhetrick/ircpatch/blob/unstable/minimal.patch "minimal.patch") is an example of a patchfile with the minimum number of elements for it to be a valid patchfile.  Many of the other bot settings are left to their default values, with only the elements necessary for a network connection and chat relay.  It will connect to a single server hosted on the same computer hosting *IRC-Patch*, and connect to a single channel, "#ircpatch":
+[minimal.patch](https://github.com/danhetrick/ircpatch/blob/master/minimal.patch "minimal.patch") is an example of a patchfile with the minimum number of elements for it to be a valid patchfile.  Many of the other bot settings are left to their default values, with only the elements necessary for a network connection and chat relay.  It will connect to a single server hosted on the same computer hosting *IRC-Patch*, and connect to a single channel, "#ircpatch":
 
     <?xml version="1.0" encoding="UTF-8"?>
     <patch>
@@ -104,7 +102,7 @@ This patchfile, although valid, won't really do anything much;  as the bot isn't
 
 ## Message of the Day
 
-The message of the day features several symbols that be used to customize the greeting.  The symbols are interpolated right before they are sent, so you can customize your MOTD for every user!  The MOTD is sent to every user who joins a channel the bot is in.  There are six (6) symbols available for use:
+The message of the day features several symbols that be used to customize the greeting.  The symbols are interpolated right before they are sent, so you can customize your MOTD for every user!  The MOTD is sent to every user who joins a channel the bot is in, via a notice.  There are six (6) symbols available for use:
 
 * `%CHANNEL%` - Replaced with the name of the channel the MOTD recipient has joined.
 * `%NICK%` - Replaced with the joining user's nick.
